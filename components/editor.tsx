@@ -1,26 +1,33 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
-import { Post } from "@prisma/client";
 import { updatePost, updatePostMetadata } from "@/lib/actions";
-import { Editor as NovelEditor } from "novel";
-import TextareaAutosize from "react-textarea-autosize";
 import { cn } from "@/lib/utils";
-import LoadingDots from "./icons/loading-dots";
+import { Post } from "@prisma/client";
 import { ExternalLink } from "lucide-react";
+import { Editor as NovelEditor } from "novel";
+import { useEffect, useState, useTransition } from "react";
+import TextareaAutosize from "react-textarea-autosize";
 import { toast } from "sonner";
+import LoadingDots from "./icons/loading-dots";
 
 type PostWithSite = Post & { site: { subdomain: string | null } | null };
 
 export default function Editor({ post }: { post: PostWithSite }) {
   let [isPendingSaving, startTransitionSaving] = useTransition();
   let [isPendingPublishing, startTransitionPublishing] = useTransition();
+  // this is a backup option incase autosave fails or title and desc are changed
+  const [isChanged, setIsChanged] = useState(false);
   const [data, setData] = useState<PostWithSite>(post);
-  const [hydrated, setHydrated] = useState(false);
 
   const url = process.env.NEXT_PUBLIC_VERCEL_ENV
     ? `https://${data.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/${data.slug}`
     : `http://${data.site?.subdomain}.localhost:3000/${data.slug}`;
+
+  useEffect(() => {
+    if (data) {
+      setIsChanged(true);
+    }
+  }, [data]);
 
   // listen to CMD + S and override the default behavior
   useEffect(() => {
@@ -43,6 +50,7 @@ export default function Editor({ post }: { post: PostWithSite }) {
       <div className="absolute right-5 top-5 mb-5 flex items-center space-x-3">
         {data.published && (
           <a
+            title="View Post"
             href={url}
             target="_blank"
             rel="noopener noreferrer"
@@ -51,9 +59,29 @@ export default function Editor({ post }: { post: PostWithSite }) {
             <ExternalLink className="h-4 w-4" />
           </a>
         )}
+
         <div className="rounded-lg bg-stone-100 px-2 py-1 text-sm text-stone-400 dark:bg-stone-800 dark:text-stone-500">
-          {isPendingSaving ? "Saving..." : "Saved"}
+          {isChanged
+            ? "Unsaved Changes"
+            : isPendingSaving
+            ? "Saving..."
+            : "Saved"}
         </div>
+
+        {isChanged && (
+          <button
+            // type="button"
+            className="rounded-lg bg-emerald-400 px-2 py-1 text-sm text-white hover:bg-emerald-500 focus:outline-none"
+            onClick={() => {
+              startTransitionSaving(async () => {
+                await updatePost(data);
+                setIsChanged(false);
+              });
+            }}
+          >
+            Save Changes
+          </button>
+        )}
         <button
           onClick={() => {
             const formData = new FormData();
@@ -122,6 +150,7 @@ export default function Editor({ post }: { post: PostWithSite }) {
           }
           startTransitionSaving(async () => {
             await updatePost(data);
+            setIsChanged(false);
           });
         }}
       />
