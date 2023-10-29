@@ -1,11 +1,11 @@
-import Link from "next/link";
-import prisma from "@/lib/prisma";
-import { notFound } from "next/navigation";
-import BlurImage from "@/components/blur-image";
-import { placeholderBlurhash, toDateString } from "@/lib/utils";
 import BlogCard from "@/components/blog-card";
+import BlurImage from "@/components/blur-image";
 import { getPostsForSite, getSiteData } from "@/lib/fetchers";
+import prisma from "@/lib/prisma";
+import { placeholderBlurhash, toDateString } from "@/lib/utils";
 import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 export async function generateStaticParams() {
   const allSites = await prisma.site.findMany({
@@ -20,6 +20,7 @@ export async function generateStaticParams() {
   });
 
   const allPaths = allSites
+    //@ts-ignore
     .flatMap(({ subdomain, customDomain }) => [
       subdomain && {
         domain: `${subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`,

@@ -1,10 +1,10 @@
-import { notFound } from "next/navigation";
-import prisma from "@/lib/prisma";
-import { getPostData, getSiteData } from "@/lib/fetchers";
 import BlogCard from "@/components/blog-card";
 import BlurImage from "@/components/blur-image";
 import MDX from "@/components/mdx";
+import { getPostData, getSiteData } from "@/lib/fetchers";
+import prisma from "@/lib/prisma";
 import { placeholderBlurhash, toDateString } from "@/lib/utils";
+import { notFound } from "next/navigation";
 
 export async function generateMetadata({
   params,
@@ -66,6 +66,7 @@ export async function generateStaticParams() {
   });
 
   const allPaths = allPosts
+    // @ts-ignore
     .flatMap(({ site, slug }) => [
       site?.subdomain && {
         domain: `${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`,

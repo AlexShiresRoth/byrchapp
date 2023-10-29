@@ -1,6 +1,6 @@
 import Image from "next/image";
-import LoginButton from "./login-button";
 import { Suspense } from "react";
+import LoginButton from "./login-button";
 
 export default function LoginPage() {
   return (
@@ -20,7 +20,7 @@ export default function LoginPage() {
         <a
           className="font-medium text-black hover:text-stone-800 dark:text-stone-300 dark:hover:text-stone-100"
           href="https://vercel.com/blog/platforms-starter-kit"
-          rel="noreferrer"
+          rel="noopener noreferrer"
           target="_blank"
         >
           Read the announcement.
