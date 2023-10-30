@@ -228,7 +228,7 @@ export default function Nav({ children }: { children: ReactNode }) {
         </div>
         <div>
           <div className="grid gap-1">
-            {externalLinks.map(({ name, href, icon }) => (
+            {/* {externalLinks.map(({ name, href, icon }) => (
               <a
                 key={name}
                 href={href}
@@ -242,7 +242,7 @@ export default function Nav({ children }: { children: ReactNode }) {
                 </div>
                 <p>↗</p>
               </a>
-            ))}
+            ))} */}
           </div>
           <div className="my-2 border-t border-amber-300 dark:border-stone-700" />
           {children}

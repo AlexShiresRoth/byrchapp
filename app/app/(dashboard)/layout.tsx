@@ -7,7 +7,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     <div>
       <Nav>
         <Suspense fallback={<div>Loading...</div>}>
-          {/* @ts-expect-error */}
           <Profile />
         </Suspense>
       </Nav>
