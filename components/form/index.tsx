@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import va from "@vercel/analytics";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
-// @ts-ignore-error
+// @ts-ignore-error TS2305: Module '"react-dom"' has no exported member 'useFormStatus'.
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
 import DomainConfiguration from "./domain-configuration";
