@@ -1,13 +1,13 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import va from "@vercel/analytics";
 import { AlertTriangle } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { experimental_useFormStatus as useFormStatus } from "react-dom";
-import LoadingDots from "./icons/loading-dots";
-import va from "@vercel/analytics";
+import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
+import LoadingDots from "./icons/loading-dots";
 
 export default function ReportAbuse() {
   const [open, setOpen] = useState(false);

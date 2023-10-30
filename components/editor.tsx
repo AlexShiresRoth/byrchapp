@@ -25,9 +25,12 @@ export default function Editor({ post }: { post: PostWithSite }) {
 
   useEffect(() => {
     if (data) {
-      setIsChanged(true);
+      // this is only necessary because title and description are not updated in the editor
+      if (data.title !== post.title || data.description !== post.description) {
+        setIsChanged(true);
+      }
     }
-  }, [data]);
+  }, [data, post]);
 
   // listen to CMD + S and override the default behavior
   useEffect(() => {

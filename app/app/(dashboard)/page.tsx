@@ -50,6 +50,7 @@ export default function Overview() {
             </div>
           }
         >
+          {/* @ts-expect-error */}
           <Posts limit={8} />
         </Suspense>
       </div>
