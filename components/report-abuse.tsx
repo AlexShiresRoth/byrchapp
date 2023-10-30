@@ -5,6 +5,7 @@ import va from "@vercel/analytics";
 import { AlertTriangle } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+// @ts-ignore-error TS2305: Module '"react-dom"' has no exported member 'useFormStatus'.
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
 import LoadingDots from "./icons/loading-dots";
