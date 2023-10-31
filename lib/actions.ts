@@ -285,6 +285,7 @@ export const updatePost = async (data: Post) => {
       data: {
         title: data.title,
         description: data.description,
+        summary: data.summary,
         content: data.content,
       },
     });
