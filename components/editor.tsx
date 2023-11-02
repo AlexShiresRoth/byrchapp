@@ -3,7 +3,7 @@
 import { updatePost, updatePostMetadata } from "@/lib/actions";
 import { cn } from "@/lib/utils";
 import { Post } from "@prisma/client";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, InfoIcon } from "lucide-react";
 import { Editor as NovelEditor } from "novel";
 import { useEffect, useState, useTransition } from "react";
 import TextareaAutosize from "react-textarea-autosize";
@@ -18,13 +18,15 @@ export default function Editor({ post }: { post: PostWithSite }) {
   const [isChanged, setIsChanged] = useState(false);
   const [data, setData] = useState<PostWithSite>(post);
 
+  console.log("data", data, "post", post);
   useEffect(() => {
     if (data) {
       // this is only necessary because title and description are not updated in the editor
       if (
         data.title !== post.title ||
         data.description !== post.description ||
-        data.summary !== post.summary
+        data.summary !== post.summary ||
+        data.category !== post.category
       ) {
         setIsChanged(true);
       }
@@ -34,7 +36,7 @@ export default function Editor({ post }: { post: PostWithSite }) {
   // listen to CMD + S and override the default behavior
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.metaKey && e.key === "s") {
+      if ((e.metaKey && e.key === "s") || (e.ctrlKey && e.key === "s")) {
         e.preventDefault();
         startTransitionSaving(async () => {
           await updatePost(data);
@@ -48,7 +50,7 @@ export default function Editor({ post }: { post: PostWithSite }) {
   }, [data, startTransitionSaving]);
 
   return (
-    <div className="relative min-h-[500px] w-full max-w-screen-lg border-stone-200 p-12 px-8 dark:border-stone-700 sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:px-12 sm:shadow-lg">
+    <div className="relative min-h-[500px] w-full max-w-screen-lg border-amber-100 p-12 px-8 dark:border-stone-700 sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:px-12 sm:shadow-lg">
       <PostButtons
         data={data}
         setData={setData}
@@ -77,6 +79,20 @@ export default function Editor({ post }: { post: PostWithSite }) {
           className="dark:placeholder-text-600 w-full resize-none border-none px-0 placeholder:text-stone-400 focus:outline-none focus:ring-0 dark:bg-black dark:text-white"
         />
 
+        <input
+          type="text"
+          placeholder="Category (optional)"
+          name="category"
+          defaultValue={post?.category || ""}
+          autoFocus
+          onChange={(e) => setData({ ...data, category: e.target.value })}
+          className="w-fit rounded border-0 bg-amber-50 p-2 font-cal text-sm text-amber-500 placeholder-amber-400 outline-none focus:ring-0"
+        />
+      </div>
+      <div className="flex flex-col gap-1">
+        <label htmlFor="tldr" className="text-sm font-semibold text-stone-400">
+          (Brief summary)
+        </label>
         <TextareaAutosize
           name="tldr"
           placeholder="Brief summary of your post (optional)"
@@ -132,10 +148,12 @@ const PostButtons = ({
   setIsChanged,
 }: PostButtonsProps) => {
   let [isPendingPublishing, startTransitionPublishing] = useTransition();
+  const [showImageInfo, setShowImageInfo] = useState(false);
 
   const url = process.env.NEXT_PUBLIC_VERCEL_ENV
     ? `https://${data.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/${data.slug}`
     : `http://${data.site?.subdomain}.localhost:3000/${data.slug}`;
+
   return (
     <div className="absolute right-5 top-5 mb-5 flex items-center space-x-3">
       {data.published && (
@@ -204,6 +222,30 @@ const PostButtons = ({
           <p>{data.published ? "Unpublish" : "Publish"}</p>
         )}
       </button>
+      <div
+        className="relative"
+        onMouseEnter={() => setShowImageInfo(true)}
+        onMouseLeave={() => setShowImageInfo(false)}
+      >
+        <button
+          title="image info"
+          className="flex h-7 w-7 items-center justify-center rounded-full bg-amber-50"
+        >
+          <InfoIcon size={16} className="text-amber-500" />
+        </button>
+        <div
+          className={cn(
+            "absolute right-0 top-full z-10 w-60 min-w-full rounded-lg border border-stone-200 bg-white p-4 shadow-lg dark:border-stone-700 dark:bg-stone-800",
+            showImageInfo ? "block" : "hidden",
+          )}
+        >
+          <p className="min-w-full">
+            <span className="text-sm font-semibold">
+              You can add a post image in the settings tab
+            </span>
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
