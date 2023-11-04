@@ -114,7 +114,7 @@ export default async function SitePostPage({
             </p>
           </div>
         </div>
-        <div className="m-auto w-full md:w-6/12">
+        <div className="m-auto w-11/12 md:w-6/12">
           <p className="m-auto my-5 text-sm font-light text-stone-500 dark:text-stone-400 md:text-base">
             {toDateString(data.createdAt)}
           </p>
