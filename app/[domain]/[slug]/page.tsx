@@ -1,6 +1,7 @@
 import BlogCard from "@/components/blog-card";
 import BlurImage from "@/components/blur-image";
 import MDX from "@/components/mdx";
+import PostComments from "@/components/post-comments";
 import { getPostData, getSiteData } from "@/lib/fetchers";
 import prisma from "@/lib/prisma";
 import { placeholderBlurhash, toDateString } from "@/lib/utils";
@@ -55,12 +56,6 @@ export async function generateStaticParams() {
           subdomain: true,
           customDomain: true,
         },
-      },
-    },
-    // feel free to remove this filter if you want to generate paths for all posts
-    where: {
-      site: {
-        subdomain: "demo",
       },
     },
   });
@@ -171,6 +166,8 @@ export default async function SitePostPage({
       <div className="flex flex-col ">
         <MDX source={data.mdxSource} />
       </div>
+
+      <PostComments domain={domain} slug={slug} />
 
       {data.adjacentPosts.length > 0 && (
         <div className="relative mb-20 mt-10 sm:mt-20">
