@@ -11,6 +11,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      transitionProperty: {
+        "min-height": "min-height",
+      },
       colors: {
         // light mode
         tremor: {

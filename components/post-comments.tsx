@@ -14,7 +14,7 @@ const PostComments = async ({ domain, slug }: Props) => {
   return (
     <PostCommentClientWrapper>
       {!commentsData.length && (
-        <div className="flex flex-col items-center justify-center py-20">
+        <div className="flex flex-col items-center justify-center py-6">
           <Image
             alt="missing post"
             src="https://illustrations.popsy.co/gray/success.svg"
@@ -32,10 +32,6 @@ const PostComments = async ({ domain, slug }: Props) => {
           <p className="font-title text-2xl text-stone-600 dark:text-stone-400">
             No comments yet.
           </p>
-          {/* Need to create a modal to show for this  */}
-          <button className="mt-1 rounded-md bg-black p-2 text-white">
-            Add a comment
-          </button>
         </div>
       )}
     </PostCommentClientWrapper>

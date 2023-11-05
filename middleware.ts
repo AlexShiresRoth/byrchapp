@@ -17,6 +17,8 @@ export const config = {
 export default async function middleware(req: NextRequest) {
   const url = req.nextUrl;
 
+  // @Note, why is auth not being passed for wildcard domains?
+
   // Get hostname of request (e.g. demo.vercel.pub, demo.localhost:3000)
   const hostname = req.headers
     .get("host")!
@@ -33,7 +35,6 @@ export default async function middleware(req: NextRequest) {
     const session = await getToken({ req });
 
     if (!session && path !== "/login") {
-      console.log("session?", session);
       return NextResponse.redirect(new URL("/login", req.url));
     } else if (session && path == "/login") {
       return NextResponse.redirect(new URL("/", req.url));
