@@ -6,8 +6,8 @@ import { X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
+import UserAvatarAndName from "../user-avatar-name";
 import PostCommentsButton from "./post-comments-button";
-import UserAvatarAndName from "./user-avatar-name";
 
 type Props = {
   children: React.ReactNode;

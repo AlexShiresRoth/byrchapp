@@ -1,7 +1,7 @@
 import BlogCard from "@/components/blog-card";
 import BlurImage from "@/components/blur-image";
+import PostComments from "@/components/comments/post-comments";
 import MDX from "@/components/mdx";
-import PostComments from "@/components/post-comments";
 import { getPostData, getSiteData } from "@/lib/fetchers";
 import prisma from "@/lib/prisma";
 import { placeholderBlurhash, toDateString } from "@/lib/utils";

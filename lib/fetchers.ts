@@ -143,7 +143,7 @@ export async function getPostComments(domain: string, slug: string) {
     [`${domain}-${slug}`],
     {
       revalidate: 900, // 15 minutes
-      tags: [`${domain}-${slug}-comments`],
+      tags: [`${domain}-${slug}`],
     },
   )();
 }
