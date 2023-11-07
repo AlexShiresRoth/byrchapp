@@ -1,18 +1,20 @@
 import { getPostComments } from "@/lib/fetchers";
+import { Post } from "@prisma/client";
 import Image from "next/image";
 import PostCommentClientWrapper from "./post-comment-client-wrapper";
 
 type Props = {
   slug: string;
   domain: string;
+  postData: Post;
 };
 
-const PostComments = async ({ domain, slug }: Props) => {
+const PostComments = async ({ domain, slug, postData }: Props) => {
   const commentsData = await getPostComments(domain, slug);
   console.log("commentData", commentsData);
-
+  // @TODO need to finish up comment, we got creation working, now we need to get the comments to show up
   return (
-    <PostCommentClientWrapper>
+    <PostCommentClientWrapper postData={postData}>
       {!commentsData.length && (
         <div className="flex flex-col items-center justify-center py-6">
           <Image
@@ -34,6 +36,11 @@ const PostComments = async ({ domain, slug }: Props) => {
           </p>
         </div>
       )}
+      <div className="flex flex-col">
+        {commentsData.map((comment) => (
+          <div key={comment.id}>{comment.content}</div>
+        ))}
+      </div>
     </PostCommentClientWrapper>
   );
 };

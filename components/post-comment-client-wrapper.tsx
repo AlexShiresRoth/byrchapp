@@ -1,20 +1,39 @@
 "use client";
-import { cn } from "@/lib/utils";
+import { addCommentToPost } from "@/lib/actions";
+import { cn, toDateString } from "@/lib/utils";
+import { Post } from "@prisma/client";
 import { X } from "lucide-react";
+import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import PostCommentsButton from "./post-comments-button";
+import UserAvatarAndName from "./user-avatar-name";
 
 type Props = {
   children: React.ReactNode;
+  postData: Post;
 };
 
-const PostCommentClientWrapper = ({ children }: Props) => {
+const PostCommentClientWrapper = ({ children, postData }: Props) => {
+  const session = useSession();
+
   const [open, setOpen] = useState(false);
   const [showCommentInput, setShowCommentInput] = useState(false);
+  const [data, setData] = useState<string>("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    console.log("formData", data);
+
+    try {
+      const res = await addCommentToPost({
+        postId: postData.id,
+        content: data as string,
+      });
+
+      console.log("res", res);
+    } catch (error) {
+      console.log("error", error);
+    }
   };
 
   return (
@@ -24,7 +43,7 @@ const PostCommentClientWrapper = ({ children }: Props) => {
         className={cn(
           `${
             open ? "translate-x-0" : "translate-x-full"
-          } fixed right-0 top-0 z-10 flex max-h-full  min-h-full flex-col overflow-y-auto bg-white shadow-2xl transition-transform`,
+          } fixed right-0 top-0 z-10 flex max-h-full min-h-full  min-w-[27vw] flex-col overflow-y-auto bg-white shadow-2xl transition-transform`,
         )}
       >
         <div className="flex w-full flex-col items-center py-6">
@@ -49,7 +68,15 @@ const PostCommentClientWrapper = ({ children }: Props) => {
                 }`,
               )}
             >
+              {showCommentInput && (
+                <p className="pb-2 text-sm text-stone-500">
+                  {toDateString(new Date())}
+                </p>
+              )}
               <TextareaAutosize
+                value={data}
+                name="comment"
+                onChange={(e) => setData(e.target.value)}
                 placeholder="Add a comment..."
                 onClick={() => setShowCommentInput(true)}
                 className={cn(
@@ -59,8 +86,13 @@ const PostCommentClientWrapper = ({ children }: Props) => {
                 )}
               />
               {showCommentInput && (
-                <div className="flex items-center justify-between">
-                  <div></div>
+                <div className="flex items-center justify-between pt-1">
+                  <div>
+                    <UserAvatarAndName
+                      image={session.data?.user?.image as string}
+                      name={session.data?.user?.name as string}
+                    />
+                  </div>
                   <div
                     datatype="new-comment-box-buttons"
                     className="mt-1 flex items-center gap-4"
@@ -71,7 +103,10 @@ const PostCommentClientWrapper = ({ children }: Props) => {
                     >
                       Cancel
                     </button>
-                    <button className="rounded bg-black p-1 text-sm text-white">
+                    <button
+                      onClick={handleSubmit}
+                      className="rounded bg-black p-1 px-2 text-sm text-white"
+                    >
                       Comment
                     </button>
                   </div>

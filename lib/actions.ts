@@ -433,3 +433,56 @@ export const editUser = async (
     }
   }
 };
+
+export const addCommentToPost = async (data: {
+  postId: string;
+  content: string;
+}) => {
+  const session = await getSession();
+  if (!session?.user.id) {
+    return {
+      error: "Not authenticated",
+    };
+  }
+
+  if (!data.postId) {
+    return {
+      error: "PostID not provided",
+    };
+  }
+
+  try {
+    const post = await prisma.post.findUnique({
+      where: {
+        id: data.postId,
+      },
+      include: {
+        site: true,
+      },
+    });
+
+    if (!post || post.userId !== session.user.id) {
+      return {
+        error: "Post not found",
+      };
+    }
+    const response = await prisma.comment.create({
+      data: {
+        postId: data.postId,
+        userId: session.user.id,
+        content: data.content,
+      },
+    });
+    await revalidateTag(
+      `${post.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-${post.slug}`,
+    );
+    post.site?.customDomain &&
+      (await revalidateTag(`${post.site?.customDomain}-${post.slug}`));
+
+    return response;
+  } catch (error: any) {
+    return {
+      error: error.message,
+    };
+  }
+};

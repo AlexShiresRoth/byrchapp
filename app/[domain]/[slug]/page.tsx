@@ -167,7 +167,7 @@ export default async function SitePostPage({
         <MDX source={data.mdxSource} />
       </div>
 
-      <PostComments domain={domain} slug={slug} />
+      <PostComments domain={domain} slug={slug} postData={data} />
 
       {data.adjacentPosts.length > 0 && (
         <div className="relative mb-20 mt-10 sm:mt-20">
