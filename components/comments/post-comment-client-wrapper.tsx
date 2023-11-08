@@ -6,6 +6,8 @@ import { X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
+import { toast } from "sonner";
+import LoadingDots from "../icons/loading-dots";
 import UserAvatarAndName from "../user-avatar-name";
 import PostCommentsButton from "./post-comments-button";
 
@@ -18,21 +20,24 @@ const PostCommentClientWrapper = ({ children, postData }: Props) => {
   const session = useSession();
 
   const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [data, setData] = useState<string>("");
 
   const handleSubmit = async () => {
-    console.log("formData", data);
-
     try {
-      const res = await addCommentToPost({
+      setIsLoading(true);
+      await addCommentToPost({
         postId: postData.id,
         content: data as string,
       });
-
-      console.log("res", res);
+      setIsLoading(false);
+      setData("");
+      setShowCommentInput(false);
     } catch (error) {
       console.log("error", error);
+      setIsLoading(false);
+      toast.error(JSON.stringify(error));
     }
   };
 
@@ -103,12 +108,17 @@ const PostCommentClientWrapper = ({ children, postData }: Props) => {
                     >
                       Cancel
                     </button>
-                    <button
-                      onClick={handleSubmit}
-                      className="rounded bg-black p-1 px-2 text-sm text-white"
-                    >
-                      Comment
-                    </button>
+                    {isLoading ? (
+                      <LoadingDots />
+                    ) : (
+                      <button
+                        onClick={handleSubmit}
+                        disabled={!data}
+                        className="rounded bg-black p-1 px-2 text-sm text-white transition-colors hover:bg-stone-700"
+                      >
+                        Comment
+                      </button>
+                    )}
                   </div>
                 </div>
               )}
