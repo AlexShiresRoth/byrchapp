@@ -1,6 +1,7 @@
+import { checkIfSessionMatchesUser } from "@/lib/actions";
 import { Comment, User } from "@prisma/client";
 import { formatDistance, subDays } from "date-fns";
-import { Heart, MessagesSquare } from "lucide-react";
+import { Heart, MessagesSquare, Trash } from "lucide-react";
 import BlurImage from "../blur-image";
 
 type CommentWithUser = Comment & { user: User };
@@ -9,8 +10,10 @@ type Props = {
   commentData: CommentWithUser;
 };
 
-const Comment = ({ commentData }: Props) => {
-  console.log("commentData", commentData);
+const Comment = async ({ commentData }: Props) => {
+  const isMatch = await checkIfSessionMatchesUser(
+    commentData.user.id as string,
+  );
 
   return (
     <div
@@ -49,20 +52,29 @@ const Comment = ({ commentData }: Props) => {
           <p>{commentData.content}</p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            title="like"
-            className="rounded-full bg-amber-50 p-2 text-stone-600 transition-all hover:text-stone-800 hover:shadow-md"
-          >
-            <Heart size={14} />
-          </button>
-          <button
-            title="reply"
-            type="button"
-            className="text-stone-500 hover:text-stone-600"
-          >
-            <MessagesSquare size={14} />
-          </button>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <button
+              title="like"
+              className="rounded-full bg-amber-50 p-2 text-stone-600 transition-all hover:text-stone-800 hover:shadow-md"
+            >
+              <Heart size={14} />
+            </button>
+            <button
+              title="reply"
+              type="button"
+              className="text-stone-500 hover:text-stone-600"
+            >
+              <MessagesSquare size={14} />
+            </button>
+          </div>
+          {isMatch && (
+            <div>
+              <button className="text-stone-600" title="delete comment">
+                <Trash size={14} />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

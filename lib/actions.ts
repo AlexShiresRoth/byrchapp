@@ -486,3 +486,14 @@ export const addCommentToPost = async (data: {
     };
   }
 };
+
+export const checkIfSessionMatchesUser = async (userId: string) => {
+  const session = await getSession();
+  if (!session?.user.id) {
+    return { error: "Not authenticated" };
+  }
+  if (session.user.id !== userId) {
+    return { error: null, isMatch: false };
+  }
+  return { error: false, isMatch: true };
+};
