@@ -497,3 +497,88 @@ export const checkIfSessionMatchesUser = async (userId: string) => {
   }
   return { error: false, isMatch: true };
 };
+
+export const likeCommentMutation = async (commentId: string) => {
+  const session = await getSession();
+
+  if (!session?.user.id) {
+    return {
+      error: "Not authenticated",
+    };
+  }
+
+  try {
+    const comment = await prisma.comment.findUnique({
+      where: {
+        id: commentId,
+      },
+      include: {
+        likes: true,
+      },
+    });
+
+    if (!comment || !comment.postId) {
+      return {
+        error: "Comment not found",
+      };
+    }
+
+    const post = await prisma.post.findUnique({
+      where: {
+        id: comment.postId,
+      },
+      include: {
+        site: true,
+      },
+    });
+
+    if (!post) {
+      return {
+        error: "Post not found",
+      };
+    }
+
+    const foundLike = comment.likes.find(
+      (like) => like.userId === session.user.id,
+    );
+    // Delete like if already liked
+    if (foundLike) {
+      await prisma.like.delete({
+        where: {
+          id: foundLike.id,
+          user: {
+            id: session.user.id,
+          },
+        },
+      });
+      await revalidateTag(
+        `${post.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-${post.slug}`,
+      );
+      post.site?.customDomain &&
+        (await revalidateTag(`${post.site?.customDomain}-${post.slug}`));
+
+      return {
+        deleted: true,
+      };
+    }
+
+    const response = await prisma.like.create({
+      data: {
+        commentId,
+        userId: session.user.id,
+      },
+    });
+
+    await revalidateTag(
+      `${post.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-${post.slug}`,
+    );
+    post.site?.customDomain &&
+      (await revalidateTag(`${post.site?.customDomain}-${post.slug}`));
+
+    return response;
+  } catch (error: any) {
+    return {
+      error: error.message,
+    };
+  }
+};

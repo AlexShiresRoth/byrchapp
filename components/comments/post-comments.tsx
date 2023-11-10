@@ -1,5 +1,5 @@
 import { getPostComments } from "@/lib/fetchers";
-import { Post, User } from "@prisma/client";
+import { Like, Post, User } from "@prisma/client";
 import Image from "next/image";
 import Comment from "./comment";
 import PostCommentClientWrapper from "./post-comment-client-wrapper";
@@ -12,7 +12,7 @@ type Props = {
 
 const PostComments = async ({ domain, slug, postData }: Props) => {
   const commentsData = await getPostComments(domain, slug);
-  console.log("commentData", commentsData);
+  // console.log("commentData", commentsData);
   return (
     <PostCommentClientWrapper postData={postData}>
       {!commentsData.length && (
@@ -41,7 +41,9 @@ const PostComments = async ({ domain, slug, postData }: Props) => {
           {commentsData.map((comment) => (
             <Comment
               key={comment.id}
-              commentData={comment as Comment & { user: User }}
+              commentData={
+                comment as Comment & { user: User } & { likes: Like[] }
+              }
             />
           ))}
         </div>

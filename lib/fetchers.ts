@@ -137,6 +137,7 @@ export async function getPostComments(domain: string, slug: string) {
         },
         include: {
           user: true,
+          likes: true,
         },
       });
     },
