@@ -498,6 +498,34 @@ export const checkIfSessionMatchesUser = async (userId: string) => {
   return { error: false, isMatch: true };
 };
 
+export const checkIfUserLikedComment = async (commentId: string) => {
+  const session = await getSession();
+
+  if (!session)
+    return {
+      error: "Not authenticated",
+    };
+
+  try {
+    const doesUserLikeComment = await prisma.like.findFirst({
+      where: {
+        commentId,
+        userId: session?.user?.id,
+      },
+    });
+
+    return {
+      doesUserLikeComment,
+      error: null,
+    };
+  } catch (error) {
+    return {
+      error,
+      doesUserLikeComment: null,
+    };
+  }
+};
+
 export const likeCommentMutation = async (commentId: string) => {
   const session = await getSession();
 
@@ -579,6 +607,74 @@ export const likeCommentMutation = async (commentId: string) => {
   } catch (error: any) {
     return {
       error: error.message,
+    };
+  }
+};
+
+export const deleteCommentMutation = async (commentId: string) => {
+  const session = await getSession();
+  if (!session) {
+    return {
+      error: "Not authenticated",
+    };
+  }
+
+  try {
+    const comment = await prisma.comment.findUnique({
+      where: {
+        id: commentId,
+        userId: session.user.id,
+      },
+      include: {
+        post: true,
+      },
+    });
+
+    if (!comment || !comment.postId) {
+      return {
+        error: "Comment not found",
+      };
+    }
+
+    const post = await prisma.post.findUnique({
+      where: {
+        id: comment.postId,
+      },
+      include: {
+        site: true,
+      },
+    });
+
+    if (!post) {
+      return {
+        error: "Post not found",
+      };
+    }
+
+    const response = await prisma.comment.update({
+      where: {
+        id: commentId,
+        userId: session.user.id,
+      },
+      data: {
+        deleted: true,
+        content: "[comment deleted]",
+        deletedContent: comment.content,
+        updatedAt: new Date(),
+      },
+    });
+
+    await revalidateTag(
+      `${post.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-${post.slug}`,
+    );
+
+    post.site?.customDomain &&
+      (await revalidateTag(`${post.site?.customDomain}-${post.slug}`));
+
+    return response;
+  } catch (error) {
+    return {
+      error: JSON.stringify(error),
     };
   }
 };

@@ -14,7 +14,6 @@ const Comment = async ({ commentData }: Props) => {
   const { error, isMatch } = await checkIfSessionMatchesUser(
     commentData.user.id as string,
   );
-
   return (
     <div
       datatype={`comment-${commentData.id}`}
@@ -23,16 +22,23 @@ const Comment = async ({ commentData }: Props) => {
       <div className="flex w-11/12 flex-col gap-2 p-4">
         <div className="flex w-full items-center justify-between">
           <div className="flex items-center gap-2">
-            <BlurImage
-              width={30}
-              height={30}
-              src={commentData.user.image as string}
-              alt={commentData.user.name as string}
-              className="rounded-full"
-            />
-            <p datatype={`commenter-name-${commentData.user.name}`}>
-              {commentData.user.name}
-            </p>
+            {!!commentData?.user && (
+              <>
+                {!!commentData.user.image && (
+                  <BlurImage
+                    width={30}
+                    height={30}
+                    src={commentData.user.image as string}
+                    alt={commentData.user.name as string}
+                    className="rounded-full"
+                  />
+                )}
+
+                <p datatype={`commenter-name-${commentData.user.name}`}>
+                  {commentData.user.name}
+                </p>
+              </>
+            )}
           </div>
           <p
             datatype={`comment-date-${commentData.createdAt}`}

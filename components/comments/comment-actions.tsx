@@ -1,6 +1,12 @@
 "use client";
-import { likeCommentMutation } from "@/lib/actions";
+import {
+  checkIfUserLikedComment,
+  deleteCommentMutation,
+  likeCommentMutation,
+} from "@/lib/actions";
+import { cn } from "@/lib/utils";
 import { Heart, MessagesSquare, Trash } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import { CommentWithUser } from "./comment";
 
 type Props = {
@@ -12,25 +18,41 @@ type Props = {
 const CommentActions = ({ isMatch, commentData, commentId }: Props) => {
   const { likes } = commentData;
 
-  const likeComment = async () => {
-    try {
-      const res = await likeCommentMutation(commentId);
-      console.log(res);
-    } catch (error) {
-      console.log(error);
+  const [hasLiked, setHasLiked] = useState(false);
+
+  const likeComment = async () => await likeCommentMutation(commentId);
+
+  const deleteComment = async () => await deleteCommentMutation(commentId);
+
+  const checkIfLikedComment = useCallback(async () => {
+    const liked = await checkIfUserLikedComment(commentId);
+
+    setHasLiked(!!liked?.doesUserLikeComment);
+  }, [commentId]);
+
+  useEffect(() => {
+    if (likes.length > 0) {
+      checkIfLikedComment();
     }
-  };
+  }, [commentId, likes.length, checkIfLikedComment]);
 
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-1">
           <button
+            type="button"
             onClick={likeComment}
             title="like"
             className="rounded-full bg-amber-50 p-2 text-stone-600 transition-all hover:text-stone-800 hover:shadow-md"
           >
-            <Heart size={14} />
+            <Heart
+              size={14}
+              className={cn({
+                "fill-amber-500 text-amber-500": hasLiked,
+                "fill-none": !hasLiked,
+              })}
+            />
           </button>
 
           {!!likes.length && (
@@ -45,9 +67,14 @@ const CommentActions = ({ isMatch, commentData, commentId }: Props) => {
           <MessagesSquare size={14} />
         </button>
       </div>
-      {isMatch && (
+      {isMatch && !commentData.deleted && (
         <div>
-          <button className="text-stone-600" title="delete comment">
+          <button
+            type="button"
+            className="text-stone-600"
+            title="delete comment"
+            onClick={deleteComment}
+          >
             <Trash size={14} />
           </button>
         </div>
