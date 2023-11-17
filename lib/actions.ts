@@ -678,3 +678,70 @@ export const deleteCommentMutation = async (commentId: string) => {
     };
   }
 };
+
+export async function getCommmentReplies(
+  slug: string,
+  commentId: string,
+  skip: number = 0,
+  take: number = 5,
+) {
+  try {
+    const session = await getSession();
+
+    if (!session?.user.id || !session) {
+      return {
+        error: "Not authenticated",
+      };
+    }
+
+    const response = await prisma.comment.findUnique({
+      where: {
+        id: commentId,
+        post: {
+          slug,
+          published: true,
+        },
+      },
+      include: {
+        replies: {
+          skip,
+          take,
+        },
+      },
+    });
+
+    if (!response) {
+      return {
+        error: "Comment not found",
+      };
+    }
+
+    const post = await prisma.post.findUnique({
+      where: {
+        id: response?.postId as string,
+      },
+      include: {
+        site: true,
+      },
+    });
+
+    if (!post) {
+      return {
+        error: "Post not found",
+      };
+    }
+
+    await revalidateTag(
+      `${post.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-${post.slug}`,
+    );
+
+    post.site?.customDomain &&
+      (await revalidateTag(`${post.site?.customDomain}-${post.slug}`));
+
+    return response;
+  } catch (error) {
+    return {
+      error: JSON.stringify(error),
+    };
+  }
+}

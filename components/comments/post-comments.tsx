@@ -40,6 +40,8 @@ const PostComments = async ({ domain, slug, postData }: Props) => {
         <div className="flex w-full flex-col">
           {commentsData.map((comment) => (
             <Comment
+              domain={domain}
+              slug={slug}
               key={comment.id}
               commentData={
                 comment as Comment & { user: User } & { likes: Like[] }

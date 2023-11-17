@@ -8,9 +8,11 @@ export type CommentWithUser = Comment & { user: User } & { likes: Like[] };
 
 type Props = {
   commentData: CommentWithUser;
+  domain: string;
+  slug: string;
 };
 
-const Comment = async ({ commentData }: Props) => {
+const Comment = async ({ commentData, domain, slug }: Props) => {
   const { error, isMatch } = await checkIfSessionMatchesUser(
     commentData.user.id as string,
   );
@@ -62,6 +64,8 @@ const Comment = async ({ commentData }: Props) => {
           isMatch={isMatch as boolean}
           commentId={commentData.id}
           commentData={commentData}
+          domain={domain}
+          slug={slug}
         />
       </div>
     </div>

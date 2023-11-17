@@ -2,6 +2,7 @@
 import {
   checkIfUserLikedComment,
   deleteCommentMutation,
+  getCommmentReplies,
   likeCommentMutation,
 } from "@/lib/actions";
 import { cn } from "@/lib/utils";
@@ -13,16 +14,43 @@ type Props = {
   isMatch: boolean;
   commentData: CommentWithUser;
   commentId: string;
+  domain: string;
+  slug: string;
 };
 
-const CommentActions = ({ isMatch, commentData, commentId }: Props) => {
+const CommentActions = ({
+  isMatch,
+  commentData,
+  commentId,
+  domain,
+  slug,
+}: Props) => {
   const { likes } = commentData;
 
   const [hasLiked, setHasLiked] = useState(false);
 
+  const [replyTake, setReplyTake] = useState(5);
+  const [replySkip, setReplySkip] = useState(0);
+
   const likeComment = async () => await likeCommentMutation(commentId);
 
   const deleteComment = async () => await deleteCommentMutation(commentId);
+
+  const getCommentReplies = async () => {
+    const commentWithReplies = await getCommmentReplies(
+      slug,
+      commentId,
+      replySkip,
+      replyTake,
+    );
+
+    console.log("commentWithReplies", commentWithReplies);
+    // if (!commentWithReplies) return;
+
+    // if (commentWithReplies?.replies.length > 0) {
+    //   setReplySkip(replySkip + replyTake);
+    // }
+  };
 
   const checkIfLikedComment = useCallback(async () => {
     const liked = await checkIfUserLikedComment(commentId);
@@ -63,6 +91,7 @@ const CommentActions = ({ isMatch, commentData, commentId }: Props) => {
           title="reply"
           type="button"
           className="text-stone-500 hover:text-stone-600"
+          onClick={getCommentReplies}
         >
           <MessagesSquare size={14} />
         </button>
