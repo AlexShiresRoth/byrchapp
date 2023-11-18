@@ -10,7 +10,7 @@ import {
 } from "@/lib/domains";
 import prisma from "@/lib/prisma";
 import { getBlurDataURL } from "@/lib/utils";
-import { Post, Site } from "@prisma/client";
+import { Comment, Post, Site } from "@prisma/client";
 import { put } from "@vercel/blob";
 import { customAlphabet } from "nanoid";
 import { revalidateTag } from "next/cache";
@@ -684,13 +684,14 @@ export async function getCommmentReplies(
   commentId: string,
   skip: number = 0,
   take: number = 5,
-) {
+): Promise<{ error: any; comment: (Comment & { replies: Comment[] }) | null }> {
   try {
     const session = await getSession();
 
     if (!session?.user.id || !session) {
       return {
         error: "Not authenticated",
+        comment: null,
       };
     }
 
@@ -713,6 +714,7 @@ export async function getCommmentReplies(
     if (!response) {
       return {
         error: "Comment not found",
+        comment: null,
       };
     }
 
@@ -728,6 +730,7 @@ export async function getCommmentReplies(
     if (!post) {
       return {
         error: "Post not found",
+        comment: null,
       };
     }
 
@@ -738,10 +741,14 @@ export async function getCommmentReplies(
     post.site?.customDomain &&
       (await revalidateTag(`${post.site?.customDomain}-${post.slug}`));
 
-    return response;
+    return {
+      error: null,
+      comment: response,
+    };
   } catch (error) {
     return {
       error: JSON.stringify(error),
+      comment: null,
     };
   }
 }

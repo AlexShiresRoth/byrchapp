@@ -3,8 +3,13 @@ import { Comment, Like, User } from "@prisma/client";
 import { formatDistance, subDays } from "date-fns";
 import BlurImage from "../blur-image";
 import CommentActions from "./comment-actions";
+import CommentReplies from "./comment-replies";
+import CommentReplyWrapper from "./comment-reply-wrapper";
 
-export type CommentWithUser = Comment & { user: User } & { likes: Like[] };
+export type CommentWithUser = Comment & { user: User } & {
+  likes: Like[];
+  replies?: Comment[];
+};
 
 type Props = {
   commentData: CommentWithUser;
@@ -60,13 +65,14 @@ const Comment = async ({ commentData, domain, slug }: Props) => {
           <p>{commentData.content}</p>
         </div>
 
-        <CommentActions
-          isMatch={isMatch as boolean}
-          commentId={commentData.id}
-          commentData={commentData}
-          domain={domain}
-          slug={slug}
-        />
+        <CommentReplyWrapper>
+          <CommentActions
+            isMatch={isMatch as boolean}
+            commentId={commentData.id}
+            commentData={commentData}
+          />
+          <CommentReplies slug={slug} commentId={commentData.id} />
+        </CommentReplyWrapper>
       </div>
     </div>
   );
