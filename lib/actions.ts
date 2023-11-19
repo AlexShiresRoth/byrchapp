@@ -695,6 +695,8 @@ export async function getCommmentReplies(
       };
     }
 
+    // going to need to recursively get replies
+    // this is just getting one level
     const response = await prisma.comment.findUnique({
       where: {
         id: commentId,
@@ -827,6 +829,25 @@ export async function addReplyToComment(commentId: string, content: string) {
     return {
       error: JSON.stringify(error),
       comment: null,
+    };
+  }
+}
+
+//@DELETE just for testing
+export async function deleteAllComments(ids: string[]) {
+  try {
+    for await (const id of ids) {
+      await prisma.comment.delete({
+        where: {
+          id,
+        },
+      });
+    }
+
+    return;
+  } catch (error) {
+    return {
+      error: JSON.stringify(error),
     };
   }
 }

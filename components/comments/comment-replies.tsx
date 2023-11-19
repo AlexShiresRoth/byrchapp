@@ -45,21 +45,6 @@ const CommentReplies = ({
     }
   };
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const { error, comment } = await getCommmentReplies(
-  //       slug,
-  //       commentId,
-  //       replySkip,
-  //       replyTake,
-  //     );
-
-  //     if (!!comment && !error) {
-  //       setComment(comment as CommentWithUser);
-  //     }
-  //   })();
-  // }, [showReplies, slug, commentId, replySkip, replyTake]);
-
   if (!showReplies) return null;
 
   return (
