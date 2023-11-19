@@ -10,7 +10,7 @@ import {
 } from "@/lib/domains";
 import prisma from "@/lib/prisma";
 import { getBlurDataURL } from "@/lib/utils";
-import { Comment, Post, Site } from "@prisma/client";
+import { Post, Site } from "@prisma/client";
 import { put } from "@vercel/blob";
 import { customAlphabet } from "nanoid";
 import { revalidateTag } from "next/cache";
@@ -684,7 +684,7 @@ export async function getCommmentReplies(
   commentId: string,
   skip: number = 0,
   take: number = 5,
-): Promise<{ error: any; comment: (Comment & { replies: Comment[] }) | null }> {
+) {
   try {
     const session = await getSession();
 
@@ -704,6 +704,8 @@ export async function getCommmentReplies(
         },
       },
       include: {
+        user: true,
+        likes: true,
         replies: {
           skip,
           take,
@@ -733,6 +735,65 @@ export async function getCommmentReplies(
         comment: null,
       };
     }
+
+    await revalidateTag(
+      `${post.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-${post.slug}`,
+    );
+
+    post.site?.customDomain &&
+      (await revalidateTag(`${post.site?.customDomain}-${post.slug}`));
+
+    return {
+      error: null,
+      comment: response,
+    };
+  } catch (error) {
+    return {
+      error: JSON.stringify(error),
+      comment: null,
+    };
+  }
+}
+
+export async function addReplyToComment(commentId: string, content: string) {
+  try {
+    const session = await getSession();
+
+    if (!session?.user.id || !session) {
+      return {
+        error: "Not authenticated",
+        comment: null,
+      };
+    }
+
+    const foundComment = await prisma.comment.findUnique({
+      where: { id: commentId },
+    });
+
+    const post = await prisma.post.findUnique({
+      where: {
+        id: foundComment?.postId as string,
+      },
+      include: {
+        site: true,
+      },
+    });
+
+    if (!post) {
+      return {
+        error: "Post not found",
+        comment: null,
+      };
+    }
+
+    const response = await prisma.comment.create({
+      data: {
+        content,
+        userId: session.user.id,
+        replyingToCommentId: commentId,
+        postId: post.id,
+      },
+    });
 
     await revalidateTag(
       `${post.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-${post.slug}`,

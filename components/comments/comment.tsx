@@ -6,18 +6,18 @@ import CommentActions from "./comment-actions";
 import CommentReplies from "./comment-replies";
 import CommentReplyWrapper from "./comment-reply-wrapper";
 
-export type CommentWithUser = Comment & { user: User } & {
+export type CommentWithUser = Comment & {
+  user: User;
   likes: Like[];
   replies?: Comment[];
 };
 
 type Props = {
   commentData: CommentWithUser;
-  domain: string;
   slug: string;
 };
 
-const Comment = async ({ commentData, domain, slug }: Props) => {
+const Comment = async ({ commentData, slug }: Props) => {
   const { error, isMatch } = await checkIfSessionMatchesUser(
     commentData.user.id as string,
   );
@@ -71,7 +71,11 @@ const Comment = async ({ commentData, domain, slug }: Props) => {
             commentId={commentData.id}
             commentData={commentData}
           />
-          <CommentReplies slug={slug} commentId={commentData.id} />
+          <CommentReplies
+            slug={slug}
+            commentId={commentData.id}
+            replyToCommentUser={commentData.user.name as string}
+          />
         </CommentReplyWrapper>
       </div>
     </div>

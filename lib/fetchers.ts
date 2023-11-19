@@ -131,6 +131,7 @@ export async function getPostComments(domain: string, slug: string) {
             slug,
             published: true,
           },
+          replyingToCommentId: null || undefined,
         },
         orderBy: {
           createdAt: "desc",
