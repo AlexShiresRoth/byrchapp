@@ -12,6 +12,7 @@ type Props = {
 
 const PostComments = async ({ domain, slug, postData }: Props) => {
   const commentsData = await getPostComments(domain, slug);
+  console.log("commentsData", commentsData);
   return (
     <PostCommentClientWrapper postData={postData}>
       {!commentsData.length && (

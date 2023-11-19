@@ -1,20 +1,26 @@
 "use client";
-import { addReplyToComment, getCommmentReplies } from "@/lib/actions";
+import { addReplyToComment } from "@/lib/actions";
 import { cn } from "@/lib/utils";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import ReactTextareaAutosize from "react-textarea-autosize";
 import { toast } from "sonner";
 import LoadingDots from "../icons/loading-dots";
-import Comment, { CommentWithUser } from "./comment";
+import { CommentWithUser } from "./comment";
 import { CommentContext } from "./comment-reply-wrapper";
 
 type Props = {
   slug: string;
   commentId: string;
   replyToCommentUser: string;
+  children?: React.ReactNode;
 };
 
-const CommentReplies = ({ slug, commentId, replyToCommentUser }: Props) => {
+const CommentReplies = ({
+  slug,
+  commentId,
+  replyToCommentUser,
+  children,
+}: Props) => {
   const { setShowReplies, showReplies } = useContext(CommentContext);
   const [comment, setComment] = useState<CommentWithUser | null>(null);
   const [addingReply, setAddingReply] = useState(false);
@@ -39,28 +45,22 @@ const CommentReplies = ({ slug, commentId, replyToCommentUser }: Props) => {
     }
   };
 
-  const getCommentReplies = useCallback(async () => {
-    const { error, comment } = await getCommmentReplies(
-      slug,
-      commentId,
-      replySkip,
-      replyTake,
-    );
+  // useEffect(() => {
+  //   (async () => {
+  //     const { error, comment } = await getCommmentReplies(
+  //       slug,
+  //       commentId,
+  //       replySkip,
+  //       replyTake,
+  //     );
 
-    if (!!comment && !error) {
-      setReplySkip(replySkip + replyTake);
-      //   setComment(comment as CommentWithUser);
-    }
-  }, [commentId, replySkip, replyTake, slug]);
-
-  useEffect(() => {
-    getCommentReplies();
-  }, [getCommentReplies]);
+  //     if (!!comment && !error) {
+  //       setComment(comment as CommentWithUser);
+  //     }
+  //   })();
+  // }, [showReplies, slug, commentId, replySkip, replyTake]);
 
   if (!showReplies) return null;
-
-  // @TODO need to figure out why this is updating every second
-  console.log("comment", comment);
 
   return (
     <div className="mt-2 border-l border-l-stone-200 pl-4">
@@ -90,14 +90,7 @@ const CommentReplies = ({ slug, commentId, replyToCommentUser }: Props) => {
           {addingReply && <LoadingDots />}
         </div>
       </div>
-      {!!comment?.replies?.length &&
-        comment.replies.map((reply) => (
-          <Comment
-            commentData={reply as CommentWithUser}
-            slug={slug}
-            key={reply.id}
-          />
-        ))}
+      {children}
     </div>
   );
 };

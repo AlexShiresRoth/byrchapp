@@ -5,6 +5,7 @@ import BlurImage from "../blur-image";
 import CommentActions from "./comment-actions";
 import CommentReplies from "./comment-replies";
 import CommentReplyWrapper from "./comment-reply-wrapper";
+import ReplyMap from "./reply-map";
 
 export type CommentWithUser = Comment & {
   user: User;
@@ -21,6 +22,8 @@ const Comment = async ({ commentData, slug }: Props) => {
   const { error, isMatch } = await checkIfSessionMatchesUser(
     commentData.user.id as string,
   );
+
+  console.log("comment data", commentData);
   return (
     <div
       datatype={`comment-${commentData.id}`}
@@ -75,7 +78,9 @@ const Comment = async ({ commentData, slug }: Props) => {
             slug={slug}
             commentId={commentData.id}
             replyToCommentUser={commentData.user.name as string}
-          />
+          >
+            <ReplyMap comment={commentData} slug={slug} />
+          </CommentReplies>
         </CommentReplyWrapper>
       </div>
     </div>

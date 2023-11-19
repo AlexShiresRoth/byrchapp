@@ -758,7 +758,6 @@ export async function getCommmentReplies(
 export async function addReplyToComment(commentId: string, content: string) {
   try {
     const session = await getSession();
-
     if (!session?.user.id || !session) {
       return {
         error: "Not authenticated",
@@ -795,6 +794,24 @@ export async function addReplyToComment(commentId: string, content: string) {
       },
     });
 
+    const updatedCommentWithReply = await prisma.comment.update({
+      where: {
+        id: commentId,
+      },
+      data: {
+        replies: {
+          connect: {
+            id: response.id,
+          },
+        },
+      },
+      include: {
+        replies: true,
+        user: true,
+        likes: true,
+      },
+    });
+
     await revalidateTag(
       `${post.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-${post.slug}`,
     );
@@ -804,7 +821,7 @@ export async function addReplyToComment(commentId: string, content: string) {
 
     return {
       error: null,
-      comment: response,
+      comment: updatedCommentWithReply,
     };
   } catch (error) {
     return {
