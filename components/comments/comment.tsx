@@ -1,4 +1,5 @@
 import { checkIfSessionMatchesUser } from "@/lib/actions";
+import { fetchCommentWithReplies } from "@/lib/fetchers";
 import { Comment, Like, User } from "@prisma/client";
 import { formatDistance, subDays } from "date-fns";
 import BlurImage from "../blur-image";
@@ -14,16 +15,29 @@ export type CommentWithUser = Comment & {
 };
 
 type Props = {
+  domain: string;
   commentData: CommentWithUser;
   slug: string;
 };
 
-const Comment = async ({ commentData, slug }: Props) => {
+const Comment = async ({ commentData, slug, domain }: Props) => {
   const { error, isMatch } = await checkIfSessionMatchesUser(
     commentData.user.id as string,
   );
 
-  console.log("comment data", commentData);
+  const commentWithReplies = await fetchCommentWithReplies(
+    domain,
+    slug,
+    commentData.id,
+    0,
+    5,
+  );
+
+  // console.log("comment replies", commentWithReplies);
+
+  // @NOTE This is currently causing an infinite loop, how do we break this?
+  if (!commentWithReplies) return null;
+
   return (
     <div
       datatype={`comment-${commentData.id}`}
@@ -74,13 +88,19 @@ const Comment = async ({ commentData, slug }: Props) => {
             commentId={commentData.id}
             commentData={commentData}
           />
-          <CommentReplies
-            slug={slug}
-            commentId={commentData.id}
-            replyToCommentUser={commentData.user.name as string}
-          >
-            <ReplyMap comment={commentData} slug={slug} />
-          </CommentReplies>
+          {!!commentWithReplies.replies.length && (
+            <CommentReplies
+              slug={slug}
+              commentId={commentWithReplies?.id as string}
+              replyToCommentUser={commentData.user.name as string}
+            >
+              <ReplyMap
+                domain={domain}
+                comment={commentWithReplies as CommentWithUser}
+                slug={slug}
+              />
+            </CommentReplies>
+          )}
         </CommentReplyWrapper>
       </div>
     </div>

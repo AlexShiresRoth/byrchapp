@@ -5,7 +5,6 @@ import { useContext, useState } from "react";
 import ReactTextareaAutosize from "react-textarea-autosize";
 import { toast } from "sonner";
 import LoadingDots from "../icons/loading-dots";
-import { CommentWithUser } from "./comment";
 import { CommentContext } from "./comment-reply-wrapper";
 
 type Props = {
@@ -21,11 +20,8 @@ const CommentReplies = ({
   replyToCommentUser,
   children,
 }: Props) => {
-  const { setShowReplies, showReplies } = useContext(CommentContext);
-  const [comment, setComment] = useState<CommentWithUser | null>(null);
+  const { showReplies } = useContext(CommentContext);
   const [addingReply, setAddingReply] = useState(false);
-  const [replyTake, setReplyTake] = useState(5);
-  const [replySkip, setReplySkip] = useState(0);
   const [replyData, setReplyData] = useState("");
 
   const handleReply = async () => {

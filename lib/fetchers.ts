@@ -156,6 +156,41 @@ export async function getPostComments(domain: string, slug: string) {
   )();
 }
 
+export const fetchCommentWithReplies = async (
+  domain: string,
+  slug: string,
+  commentId: string,
+  skip?: number,
+  take?: number,
+) => {
+  return await unstable_cache(
+    async () => {
+      return await prisma.comment.findUnique({
+        where: {
+          id: commentId,
+        },
+        include: {
+          user: true,
+          likes: true,
+          replies: {
+            skip,
+            take,
+            include: {
+              user: true,
+              likes: true,
+            },
+          },
+        },
+      });
+    },
+    [`${domain}-${slug}`],
+    {
+      revalidate: 900, // 15 minutes
+      tags: [`${domain}-${slug}`],
+    },
+  )();
+};
+
 async function getMdxSource(postContents: string) {
   // transforms links like <link> to [link](link) as MDX doesn't support <link> syntax
   // https://mdxjs.com/docs/what-is-mdx/#markdown

@@ -12,7 +12,7 @@ type Props = {
 
 const PostComments = async ({ domain, slug, postData }: Props) => {
   const commentsData = await getPostComments(domain, slug);
-  console.log("commentsData", commentsData);
+
   return (
     <PostCommentClientWrapper postData={postData}>
       {!commentsData.length && (
@@ -43,6 +43,7 @@ const PostComments = async ({ domain, slug, postData }: Props) => {
               slug={slug}
               key={comment.id}
               commentData={comment as CommentWithUser}
+              domain={domain}
             />
           ))}
         </div>
