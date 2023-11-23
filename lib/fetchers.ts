@@ -143,6 +143,12 @@ export async function getPostComments(domain: string, slug: string) {
             include: {
               user: true,
               likes: true,
+              replies: {
+                include: {
+                  user: true,
+                  likes: true,
+                },
+              },
             },
           },
         },
@@ -178,6 +184,12 @@ export const fetchCommentWithReplies = async (
             include: {
               user: true,
               likes: true,
+              replies: {
+                include: {
+                  user: true,
+                  likes: true,
+                },
+              },
             },
           },
         },

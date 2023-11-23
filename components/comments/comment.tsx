@@ -1,5 +1,4 @@
 import { checkIfSessionMatchesUser } from "@/lib/actions";
-import { fetchCommentWithReplies } from "@/lib/fetchers";
 import { Comment, Like, User } from "@prisma/client";
 import { formatDistance, subDays } from "date-fns";
 import BlurImage from "../blur-image";
@@ -24,19 +23,8 @@ const Comment = async ({ commentData, slug, domain }: Props) => {
   const { error, isMatch } = await checkIfSessionMatchesUser(
     commentData.user.id as string,
   );
-
-  const commentWithReplies = await fetchCommentWithReplies(
-    domain,
-    slug,
-    commentData.id,
-    0,
-    5,
-  );
-
-  // console.log("comment replies", commentWithReplies);
-
   // @NOTE This is currently causing an infinite loop, how do we break this?
-  if (!commentWithReplies) return null;
+  if (!commentData) return null;
 
   return (
     <div
@@ -88,19 +76,17 @@ const Comment = async ({ commentData, slug, domain }: Props) => {
             commentId={commentData.id}
             commentData={commentData}
           />
-          {!!commentWithReplies.replies.length && (
-            <CommentReplies
+          <CommentReplies
+            slug={slug}
+            commentId={commentData?.id as string}
+            replyToCommentUser={commentData.user.name as string}
+          >
+            <ReplyMap
+              domain={domain}
+              replies={commentData?.replies as CommentWithUser[]}
               slug={slug}
-              commentId={commentWithReplies?.id as string}
-              replyToCommentUser={commentData.user.name as string}
-            >
-              <ReplyMap
-                domain={domain}
-                comment={commentWithReplies as CommentWithUser}
-                slug={slug}
-              />
-            </CommentReplies>
-          )}
+            />
+          </CommentReplies>
         </CommentReplyWrapper>
       </div>
     </div>

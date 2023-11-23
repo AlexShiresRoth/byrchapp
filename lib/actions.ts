@@ -837,7 +837,7 @@ export async function addReplyToComment(commentId: string, content: string) {
 export async function deleteAllComments(ids: string[]) {
   try {
     for await (const id of ids) {
-      await prisma.comment.delete({
+      const comment = await prisma.comment.delete({
         where: {
           id,
         },
