@@ -1,11 +1,10 @@
-import { checkIfSessionMatchesUser } from "@/lib/actions";
+import { checkIfSessionMatchesUser, getCommmentReplies } from "@/lib/actions";
 import { Comment, Like, User } from "@prisma/client";
 import { formatDistance, subDays } from "date-fns";
 import BlurImage from "../blur-image";
 import CommentActions from "./comment-actions";
 import CommentReplies from "./comment-replies";
 import CommentReplyWrapper from "./comment-reply-wrapper";
-import ReplyMap from "./reply-map";
 
 export type CommentWithUser = Comment & {
   user: User;
@@ -81,11 +80,31 @@ const Comment = async ({ commentData, slug, domain }: Props) => {
             commentId={commentData?.id as string}
             replyToCommentUser={commentData.user.name as string}
           >
-            <ReplyMap
-              domain={domain}
-              replies={commentData?.replies as CommentWithUser[]}
-              slug={slug}
-            />
+            {!!commentData?.replies?.length &&
+              commentData.replies.map(async (reply) => {
+                const checkIfReplyHasReplies = async () => {
+                  if (!Object.hasOwn(reply, "replies")) {
+                    const { comment } = await getCommmentReplies(
+                      slug,
+                      reply.id,
+                    );
+
+                    return comment;
+                  }
+                };
+
+                const updatedOrExistingReply =
+                  (await checkIfReplyHasReplies()) || reply;
+
+                return (
+                  <Comment
+                    commentData={updatedOrExistingReply as CommentWithUser}
+                    slug={slug}
+                    domain={domain}
+                    key={updatedOrExistingReply.id}
+                  />
+                );
+              })}
           </CommentReplies>
         </CommentReplyWrapper>
       </div>

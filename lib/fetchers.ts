@@ -171,7 +171,7 @@ export const fetchCommentWithReplies = async (
 ) => {
   return await unstable_cache(
     async () => {
-      return await prisma.comment.findUnique({
+      const foundComment = await prisma.comment.findUniqueOrThrow({
         where: {
           id: commentId,
         },
@@ -194,6 +194,8 @@ export const fetchCommentWithReplies = async (
           },
         },
       });
+
+      return foundComment;
     },
     [`${domain}-${slug}`],
     {

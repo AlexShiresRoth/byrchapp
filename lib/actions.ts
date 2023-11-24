@@ -711,6 +711,16 @@ export async function getCommmentReplies(
         replies: {
           skip,
           take,
+          include: {
+            user: true,
+            likes: true,
+            replies: {
+              include: {
+                user: true,
+                likes: true,
+              },
+            },
+          },
         },
       },
     });
