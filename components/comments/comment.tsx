@@ -80,29 +80,42 @@ const Comment = async ({ commentData, slug, domain }: Props) => {
             commentId={commentData?.id as string}
             replyToCommentUser={commentData.user.name as string}
           >
+            {/* if comments are so deeply nested provide a modal */}
             {!!commentData?.replies?.length &&
-              commentData.replies.map(async (reply) => {
+              commentData.replies.map(async (reply, index) => {
                 const checkIfReplyHasReplies = async () => {
                   if (!Object.hasOwn(reply, "replies")) {
                     const { comment } = await getCommmentReplies(
                       slug,
                       reply.id,
                     );
-
                     return comment;
                   }
                 };
-
+                // index is just reply count der
+                const deeplyNestedReplies = index > 2;
                 const updatedOrExistingReply =
                   (await checkIfReplyHasReplies()) || reply;
 
                 return (
-                  <Comment
-                    commentData={updatedOrExistingReply as CommentWithUser}
-                    slug={slug}
-                    domain={domain}
-                    key={updatedOrExistingReply.id}
-                  />
+                  <>
+                    <Comment
+                      commentData={updatedOrExistingReply as CommentWithUser}
+                      slug={slug}
+                      domain={domain}
+                      key={updatedOrExistingReply.id}
+                    />
+                    {deeplyNestedReplies && (
+                      <div className="flex w-full justify-center">
+                        <button
+                          type="button"
+                          className="text-sm text-stone-400"
+                        >
+                          View more replies
+                        </button>
+                      </div>
+                    )}
+                  </>
                 );
               })}
           </CommentReplies>

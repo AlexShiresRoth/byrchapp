@@ -36,7 +36,7 @@ const PostComments = async ({ domain, slug, postData }: Props) => {
           </p>
         </div>
       )}
-      <div className="flex w-full max-w-md flex-col items-center">
+      <div className="min-w-xl flex w-full max-w-xl flex-col items-center">
         <div className="flex w-full flex-col">
           {commentsData.map((comment) => (
             <Comment
