@@ -205,6 +205,34 @@ export const fetchCommentWithReplies = async (
   )();
 };
 
+export async function getNestedReplyLevel(commentId: string) {
+  return await unstable_cache(
+    async () => {
+      let levels = 0;
+      async function recursivelyGetComment(id: string): Promise<number> {
+        const foundComment = await prisma.comment.findUniqueOrThrow({
+          where: {
+            id,
+          },
+        });
+
+        if (foundComment?.replyingToCommentId) {
+          levels++;
+          return await recursivelyGetComment(foundComment.replyingToCommentId);
+        }
+
+        return levels;
+      }
+      return await recursivelyGetComment(commentId);
+    },
+    [`${commentId}`],
+    {
+      revalidate: 900, // 15 minutes
+      tags: [`${commentId}`],
+    },
+  )();
+}
+
 async function getMdxSource(postContents: string) {
   // transforms links like <link> to [link](link) as MDX doesn't support <link> syntax
   // https://mdxjs.com/docs/what-is-mdx/#markdown

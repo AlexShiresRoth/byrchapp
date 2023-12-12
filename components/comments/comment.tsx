@@ -1,4 +1,5 @@
 import { checkIfSessionMatchesUser, getCommmentReplies } from "@/lib/actions";
+import { getNestedReplyLevel } from "@/lib/fetchers";
 import { Comment, Like, User } from "@prisma/client";
 import { formatDistance, subDays } from "date-fns";
 import BlurImage from "../blur-image";
@@ -80,9 +81,8 @@ const Comment = async ({ commentData, slug, domain }: Props) => {
             commentId={commentData?.id as string}
             replyToCommentUser={commentData.user.name as string}
           >
-            {/* if comments are so deeply nested provide a modal */}
             {!!commentData?.replies?.length &&
-              commentData.replies.map(async (reply, index) => {
+              commentData.replies.map(async (reply) => {
                 const checkIfReplyHasReplies = async () => {
                   if (!Object.hasOwn(reply, "replies")) {
                     const { comment } = await getCommmentReplies(
@@ -92,11 +92,22 @@ const Comment = async ({ commentData, slug, domain }: Props) => {
                     return comment;
                   }
                 };
-                // index is just reply count der
-                const deeplyNestedReplies = index > 2;
+
                 const updatedOrExistingReply =
                   (await checkIfReplyHasReplies()) || reply;
 
+                const nestedLevel = await getNestedReplyLevel(reply.id);
+
+                // will want to pass comment id to a modal to get replies in new modal
+                if (nestedLevel > 2) {
+                  return (
+                    <div className="flex w-full justify-center" key={reply.id}>
+                      <button type="button" className="text-sm text-stone-400">
+                        View more replies
+                      </button>
+                    </div>
+                  );
+                }
                 return (
                   <>
                     <Comment
@@ -105,16 +116,6 @@ const Comment = async ({ commentData, slug, domain }: Props) => {
                       domain={domain}
                       key={updatedOrExistingReply.id}
                     />
-                    {deeplyNestedReplies && (
-                      <div className="flex w-full justify-center">
-                        <button
-                          type="button"
-                          className="text-sm text-stone-400"
-                        >
-                          View more replies
-                        </button>
-                      </div>
-                    )}
                   </>
                 );
               })}
