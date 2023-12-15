@@ -6,6 +6,8 @@ import BlurImage from "../blur-image";
 import CommentActions from "./comment-actions";
 import CommentReplies from "./comment-replies";
 import CommentReplyWrapper from "./comment-reply-wrapper";
+import RepliesModal from "./replies-modal";
+import ViewMoreRepliesButton from "./view-more-replies-button";
 
 export type CommentWithUser = Comment & {
   user: User;
@@ -81,6 +83,7 @@ const Comment = async ({ commentData, slug, domain }: Props) => {
             commentId={commentData?.id as string}
             replyToCommentUser={commentData.user.name as string}
           >
+            <RepliesModal reply={commentData as CommentWithUser} slug={slug} />
             {!!commentData?.replies?.length &&
               commentData.replies.map(async (reply) => {
                 const checkIfReplyHasReplies = async () => {
@@ -101,11 +104,12 @@ const Comment = async ({ commentData, slug, domain }: Props) => {
                 // will want to pass comment id to a modal to get replies in new modal
                 if (nestedLevel > 2) {
                   return (
-                    <div className="flex w-full justify-center" key={reply.id}>
-                      <button type="button" className="text-sm text-stone-400">
-                        View more replies
-                      </button>
-                    </div>
+                    <>
+                      <ViewMoreRepliesButton
+                        replyId={reply.id}
+                        key={reply.id}
+                      />
+                    </>
                   );
                 }
                 return (
