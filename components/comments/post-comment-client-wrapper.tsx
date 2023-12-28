@@ -48,7 +48,7 @@ const PostCommentClientWrapper = ({ children, postData }: Props) => {
         className={cn(
           `${
             open ? "translate-x-0" : "translate-x-full"
-          } fixed right-0 top-0 z-10 flex max-h-full min-h-full min-w-[27vw] flex-col overflow-y-auto bg-white shadow-2xl transition-transform`,
+          } fixed right-0 top-0 z-10 flex max-h-full min-h-full min-w-[35vw] flex-col overflow-y-auto bg-white shadow-2xl transition-transform`,
         )}
       >
         <div className="flex w-full flex-col items-center py-6">

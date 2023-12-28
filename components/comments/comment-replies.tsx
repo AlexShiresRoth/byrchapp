@@ -58,7 +58,7 @@ const CommentReplies = ({
             `w-full rounded border-0 bg-stone-100 transition-min-height`,
           )}
         />
-        <div className="flex w-full justify-end">
+        <div className="flex w-full justify-end pb-4">
           {!addingReply && (
             <button
               type="button"

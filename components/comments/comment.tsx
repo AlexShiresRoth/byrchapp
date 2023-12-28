@@ -8,11 +8,12 @@ import CommentReplies from "./comment-replies";
 import CommentReplyWrapper from "./comment-reply-wrapper";
 import RepliesModal from "./replies-modal";
 import ViewMoreRepliesButton from "./view-more-replies-button";
+import UserAvatarAndName from "../user-avatar-name";
 
 export type CommentWithUser = Comment & {
   user: User;
   likes: Like[];
-  replies?: Comment[];
+  replies?: CommentWithUser[];
 };
 
 type Props = {
@@ -31,7 +32,7 @@ const Comment = async ({ commentData, slug, domain }: Props) => {
   return (
     <div
       datatype={`comment-${commentData.id}`}
-      className="flex w-full flex-col items-center border-t border-stone-100"
+      className="flex w-full flex-col items-end border-t border-stone-100"
     >
       <div className="flex w-11/12 flex-col gap-2 p-4">
         <div className="flex w-full items-center justify-between">
@@ -39,18 +40,11 @@ const Comment = async ({ commentData, slug, domain }: Props) => {
             {!!commentData?.user && (
               <>
                 {!!commentData.user.image && (
-                  <BlurImage
-                    width={30}
-                    height={30}
-                    src={commentData.user.image as string}
-                    alt={commentData.user.name as string}
-                    className="rounded-full"
+                  <UserAvatarAndName
+                    image={commentData.user.image}
+                    name={commentData.user.name}
                   />
                 )}
-
-                <p datatype={`commenter-name-${commentData.user.name}`}>
-                  {commentData.user.name}
-                </p>
               </>
             )}
           </div>
@@ -83,7 +77,11 @@ const Comment = async ({ commentData, slug, domain }: Props) => {
             commentId={commentData?.id as string}
             replyToCommentUser={commentData.user.name as string}
           >
-            <RepliesModal reply={commentData as CommentWithUser} slug={slug} />
+            <RepliesModal
+              reply={commentData as CommentWithUser}
+              slug={slug}
+              domain={domain}
+            />
             {!!commentData?.replies?.length &&
               commentData.replies.map(async (reply) => {
                 const checkIfReplyHasReplies = async () => {
