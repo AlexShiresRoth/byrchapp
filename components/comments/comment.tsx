@@ -83,7 +83,7 @@ const Comment = async ({ commentData, slug, domain }: Props) => {
               domain={domain}
             />
             {!!commentData?.replies?.length &&
-              commentData.replies.map(async (reply) => {
+              commentData.replies.map(async (reply, index, arr) => {
                 const checkIfReplyHasReplies = async () => {
                   if (!Object.hasOwn(reply, "replies")) {
                     const { comment } = await getCommmentReplies(
@@ -101,6 +101,7 @@ const Comment = async ({ commentData, slug, domain }: Props) => {
 
                 // will want to pass comment id to a modal to get replies in new modal
                 if (nestedLevel > 2) {
+                  if (index !== 0) return null;
                   return (
                     <>
                       <ViewMoreRepliesButton
