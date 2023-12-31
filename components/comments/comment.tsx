@@ -2,13 +2,12 @@ import { checkIfSessionMatchesUser, getCommmentReplies } from "@/lib/actions";
 import { getNestedReplyLevel } from "@/lib/fetchers";
 import { Comment, Like, User } from "@prisma/client";
 import { formatDistance, subDays } from "date-fns";
-import BlurImage from "../blur-image";
+import UserAvatarAndName from "../user-avatar-name";
 import CommentActions from "./comment-actions";
 import CommentReplies from "./comment-replies";
 import CommentReplyWrapper from "./comment-reply-wrapper";
 import RepliesModal from "./replies-modal";
 import ViewMoreRepliesButton from "./view-more-replies-button";
-import UserAvatarAndName from "../user-avatar-name";
 
 export type CommentWithUser = Comment & {
   user: User;

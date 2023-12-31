@@ -119,7 +119,6 @@ export default async function SitePostPage({
           <p className="text-md m-auto mb-6 text-stone-600 dark:text-stone-400 md:text-lg">
             {data.description}
           </p>
-          {/* ADD Summary here */}
           {!!data?.summary && (
             <p className="rounded bg-amber-400 p-4">
               <span className="text-xl font-bold">TL;DR</span>

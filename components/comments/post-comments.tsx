@@ -14,7 +14,10 @@ const PostComments = async ({ domain, slug, postData }: Props) => {
   const commentsData = await getPostComments(domain, slug);
 
   return (
-    <PostCommentClientWrapper postData={postData}>
+    <PostCommentClientWrapper
+      postData={postData}
+      commentsCount={commentsData.length}
+    >
       {!commentsData.length && (
         <div className="flex flex-col items-center justify-center py-6">
           <Image
