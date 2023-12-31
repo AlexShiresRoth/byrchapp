@@ -34,7 +34,7 @@ const Comment = async ({ commentData, slug, domain }: Props) => {
       datatype={`comment-${commentData.id}`}
       className="flex w-full flex-col items-end border-t border-stone-100"
     >
-      <div className="flex w-11/12 flex-col gap-2 p-4">
+      <div className="my-4 flex w-full flex-col gap-2 pl-4">
         <div className="flex w-full items-center justify-between">
           <div className="flex items-center gap-2">
             {!!commentData?.user && (

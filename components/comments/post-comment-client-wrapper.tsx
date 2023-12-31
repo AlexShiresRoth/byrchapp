@@ -42,17 +42,11 @@ const PostCommentClientWrapper = ({ children, postData }: Props) => {
   };
 
   return (
-    <>
-      <PostCommentsButton setOpen={setOpen} open={open} />
-      <div
-        className={cn(
-          `${
-            open ? "translate-x-0" : "translate-x-full"
-          } fixed right-0 top-0 z-10 flex max-h-full min-h-full min-w-[35vw] flex-col overflow-y-auto bg-white shadow-2xl transition-transform`,
-        )}
-      >
+    <div className="flex w-full flex-col items-center">
+      {/* <PostCommentsButton setOpen={setOpen} open={open} /> */}
+      <div className="flex w-full flex-col md:w-6/12">
         <div className="flex w-full flex-col items-center py-6">
-          <div className="flex w-11/12 flex-col gap-6">
+          <div className="flex w-full flex-col gap-6">
             <div
               datatype="comments-header"
               className="flex items-center justify-between"
@@ -127,7 +121,7 @@ const PostCommentClientWrapper = ({ children, postData }: Props) => {
         </div>
         {children}
       </div>
-    </>
+    </div>
   );
 };
 
