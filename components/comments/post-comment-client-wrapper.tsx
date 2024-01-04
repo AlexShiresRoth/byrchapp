@@ -2,7 +2,6 @@
 import { addCommentToPost } from "@/lib/actions";
 import { cn, toDateString } from "@/lib/utils";
 import { Post } from "@prisma/client";
-import { X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
@@ -57,18 +56,6 @@ const PostCommentClientWrapper = ({
         <div className="flex w-full flex-col md:w-6/12">
           <div className="flex w-full flex-col items-center py-6">
             <div className="flex w-full flex-col gap-6">
-              <div
-                datatype="comments-header"
-                className="flex items-center justify-between"
-              >
-                <button
-                  title="close comments"
-                  onClick={() => setOpen(!open)}
-                  className="rounded-full bg-stone-100 p-2"
-                >
-                  <X size={16} />
-                </button>
-              </div>
               <div
                 datatype="new-comment-box"
                 className={cn(

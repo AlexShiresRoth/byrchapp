@@ -1,12 +1,15 @@
 "use client";
-import { getCommmentReplies } from "@/lib/actions";
-import { useCallback, useContext, useEffect, useState } from "react";
-import Comment, { CommentWithUser } from "./comment";
-import { CommentContext } from "./comment-reply-wrapper";
-import { createPortal } from "react-dom";
+import { checkIfSessionMatchesUser, getCommmentReplies } from "@/lib/actions";
 import { AnimatePresence, motion } from "framer-motion";
-import Image from "next/image";
-import UserAvatarAndName from "../user-avatar-name";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { toast } from "sonner";
+import { CommentWithUser } from "./comment";
+import CommentActions from "./comment-actions";
+import CommentContent from "./comment-content";
+import CommentReplies from "./comment-replies";
+import { CommentContext } from "./comment-reply-wrapper";
+import CommentUser from "./comment-user";
 
 type Props = {
   reply: CommentWithUser;
@@ -14,23 +17,40 @@ type Props = {
   domain: string;
 };
 
-// @TOOD need to do the same thing for comments here
-// @TODO should componentize avatar and name
 const RepliesModal = ({ reply, slug, domain }: Props) => {
   const { showReplyModal, toggleReplyModal } = useContext(CommentContext);
   const [commentWithReplies, setCWR] = useState<CommentWithUser>();
+  const [isMatch, setIsMatch] = useState(false);
 
-  // @TODO not positive we need to refetch replies, i'm tired so not thinking good
   const fetchReplies = useCallback(async () => {
     const { comment } = await getCommmentReplies(slug, reply.id);
     return setCWR(comment as CommentWithUser);
   }, [reply.id, slug]);
+
+  const handleSession = useCallback(async () => {
+    const { error, isMatch } = await checkIfSessionMatchesUser(
+      reply.user.id as string,
+    );
+
+    setIsMatch(isMatch as boolean);
+    if (error) {
+      toast.error(error);
+      return;
+    }
+  }, [reply.user.id]);
 
   useEffect(() => {
     if (showReplyModal && !commentWithReplies) {
       fetchReplies();
     }
   }, [showReplyModal, commentWithReplies, fetchReplies]);
+
+  useEffect(() => {
+    if (showReplyModal) {
+      handleSession();
+    }
+  }, [showReplyModal, handleSession]);
+
   if (!showReplyModal) return null;
 
   return createPortal(
@@ -43,7 +63,7 @@ const RepliesModal = ({ reply, slug, domain }: Props) => {
           exit={{ opacity: 0 }}
         >
           <motion.div
-            className="relative mx-auto my-8 flex w-full max-w-3xl flex-col rounded-lg bg-white p-6 shadow-2xl"
+            className="relative mx-auto my-8 flex w-11/12 max-w-3xl flex-col rounded-lg bg-white p-6 shadow-2xl md:w-full"
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
@@ -66,29 +86,39 @@ const RepliesModal = ({ reply, slug, domain }: Props) => {
               </button>
             </div>
             <h3>Original comment</h3>
-            <div className="my-2 rounded  bg-amber-50 p-4">
-              <p>{commentWithReplies?.content}</p>
-              <UserAvatarAndName
-                image={commentWithReplies?.user.image}
-                name={commentWithReplies?.user.name}
-              />
+            <div className="my-2 rounded bg-stone-100 p-4">
+              <>
+                <CommentUser commentData={reply} />
+                <CommentContent commentData={reply} />
+                <CommentActions
+                  isMatch
+                  commentData={reply}
+                  commentId={reply.id}
+                  allowReply={false}
+                />
+              </>
             </div>
+            <CommentReplies
+              slug={slug}
+              commentId={reply.id as string}
+              replyToCommentUser={reply.user.name as string}
+            />
             <div className="flex flex-col space-y-4">
               {commentWithReplies?.replies?.length &&
                 commentWithReplies?.replies.map((reply) => {
-                  console.log("reply", reply);
                   return (
                     <div
                       key={reply.id}
-                      className="my-2 flex flex-col space-y-2 border-l border-slate-200 pl-4"
+                      className="my-2 border-l border-stone-200 pl-4"
                     >
-                      <p className="text-sm text-gray-800">{reply.content}</p>
-                      <div className="flex items-center space-x-2">
-                        <UserAvatarAndName
-                          image={reply.user?.image}
-                          name={reply.user?.name}
-                        />
-                      </div>
+                      <CommentUser commentData={reply} />
+                      <CommentContent commentData={reply} />
+                      <CommentActions
+                        isMatch
+                        commentData={reply}
+                        commentId={reply.id}
+                        allowReply={false}
+                      />
                     </div>
                   );
                 })}

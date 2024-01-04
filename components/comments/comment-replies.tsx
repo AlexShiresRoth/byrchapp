@@ -35,6 +35,7 @@ const CommentReplies = ({
         return;
       }
       setAddingReply(false);
+      setReplyData("");
     } catch (error) {
       console.log(error);
       setAddingReply(false);

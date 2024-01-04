@@ -14,12 +14,18 @@ type Props = {
   isMatch: boolean;
   commentData: CommentWithUser;
   commentId: string;
+  allowReply?: boolean;
 };
 
-const CommentActions = ({ isMatch, commentData, commentId }: Props) => {
+const CommentActions = ({
+  isMatch,
+  commentData,
+  commentId,
+  allowReply = true,
+}: Props) => {
   const { setShowReplies, showReplies } = useContext(CommentContext);
 
-  const { likes } = commentData;
+  const { likes, replies } = commentData;
 
   const [hasLiked, setHasLiked] = useState(false);
 
@@ -62,14 +68,19 @@ const CommentActions = ({ isMatch, commentData, commentId }: Props) => {
             <span className="text-sm text-stone-600">{likes.length}</span>
           )}
         </div>
-        <button
-          title="reply"
-          type="button"
-          className="text-stone-500 hover:text-stone-600"
-          onClick={() => setShowReplies(!showReplies)}
-        >
-          <MessagesSquare size={14} />
-        </button>
+        {allowReply && (
+          <button
+            title="reply"
+            type="button"
+            className="flex items-center gap-2 text-stone-500 hover:text-stone-600"
+            onClick={() => setShowReplies(!showReplies)}
+          >
+            <MessagesSquare size={14} />
+            {!!replies?.length && (
+              <span className="text-xs">{replies.length}</span>
+            )}
+          </button>
+        )}
       </div>
       {isMatch && !commentData.deleted && (
         <div>

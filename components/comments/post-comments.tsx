@@ -40,7 +40,7 @@ const PostComments = async ({ domain, slug, postData }: Props) => {
         </div>
       )}
       <div className="min-w-xl flex w-full  flex-col items-center">
-        <div className="flex w-full flex-col">
+        <div className="flex w-11/12 flex-col md:w-full">
           {commentsData.map((comment) => (
             <Comment
               slug={slug}
