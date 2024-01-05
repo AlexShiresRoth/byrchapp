@@ -1,7 +1,4 @@
-import BlogCard from "@/components/blog-card";
 import BlurImage from "@/components/blur-image";
-import PostComments from "@/components/comments/post-comments";
-import MDX from "@/components/mdx";
 import { getPostData, getSiteData } from "@/lib/fetchers";
 import prisma from "@/lib/prisma";
 import { placeholderBlurhash, toDateString } from "@/lib/utils";
@@ -161,35 +158,6 @@ export default async function SitePostPage({
           </a>
         </div>
       </div>
-
-      <div className="flex flex-col ">
-        <MDX source={data.mdxSource} />
-      </div>
-
-      <PostComments domain={domain} slug={slug} postData={data} />
-
-      {data.adjacentPosts.length > 0 && (
-        <div className="relative mb-20 mt-10 sm:mt-20">
-          <div
-            className="absolute inset-0 flex items-center"
-            aria-hidden="true"
-          >
-            <div className="w-full border-t border-stone-300 dark:border-stone-700" />
-          </div>
-          <div className="relative flex justify-center">
-            <span className="bg-white px-2 text-sm text-stone-500 dark:bg-black dark:text-stone-400">
-              Continue Reading
-            </span>
-          </div>
-        </div>
-      )}
-      {data.adjacentPosts && (
-        <div className="mx-5 mb-20 grid max-w-screen-xl grid-cols-1 gap-x-4 gap-y-8 md:grid-cols-2 xl:mx-auto xl:grid-cols-3">
-          {data.adjacentPosts.map((data: any, index: number) => (
-            <BlogCard key={index} data={data} />
-          ))}
-        </div>
-      )}
     </>
   );
 }

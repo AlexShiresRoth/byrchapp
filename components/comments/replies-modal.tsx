@@ -17,6 +17,7 @@ type Props = {
   domain: string;
 };
 
+//@TODO need to handle ui update on modal when reply is added
 const RepliesModal = ({ reply, slug, domain }: Props) => {
   const { showReplyModal, toggleReplyModal } = useContext(CommentContext);
   const [commentWithReplies, setCWR] = useState<CommentWithUser>();
@@ -91,7 +92,7 @@ const RepliesModal = ({ reply, slug, domain }: Props) => {
                 <CommentUser commentData={reply} />
                 <CommentContent commentData={reply} />
                 <CommentActions
-                  isMatch
+                  isMatch={isMatch}
                   commentData={reply}
                   commentId={reply.id}
                   allowReply={false}
@@ -114,7 +115,7 @@ const RepliesModal = ({ reply, slug, domain }: Props) => {
                       <CommentUser commentData={reply} />
                       <CommentContent commentData={reply} />
                       <CommentActions
-                        isMatch
+                        isMatch={isMatch}
                         commentData={reply}
                         commentId={reply.id}
                         allowReply={false}

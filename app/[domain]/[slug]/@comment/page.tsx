@@ -1,21 +1,27 @@
-import { getPostComments } from "@/lib/fetchers";
-import { Post } from "@prisma/client";
+import Comment, { CommentWithUser } from "@/components/comments/comment";
+import PostCommentClientWrapper from "@/components/comments/post-comment-client-wrapper";
+import { getPostComments, getPostData } from "@/lib/fetchers";
 import Image from "next/image";
-import Comment, { CommentWithUser } from "./comment";
-import PostCommentClientWrapper from "./post-comment-client-wrapper";
+import { notFound } from "next/navigation";
 
 type Props = {
-  slug: string;
-  domain: string;
-  postData: Post;
+  params: { slug: string; domain: string };
 };
 
-const PostComments = async ({ domain, slug, postData }: Props) => {
+const PostComments = async ({ params }: Props) => {
+  const domain = decodeURIComponent(params.domain);
+  const slug = decodeURIComponent(params.slug);
+  const data = await getPostData(domain, slug);
+
+  if (!data) {
+    notFound();
+  }
+
   const commentsData = await getPostComments(domain, slug);
 
   return (
     <PostCommentClientWrapper
-      postData={postData}
+      postData={data}
       commentsCount={commentsData.length}
     >
       {!commentsData.length && (
