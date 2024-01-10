@@ -1,6 +1,4 @@
-import BlogCard from "@/components/blog-card";
 import BlurImage from "@/components/blur-image";
-import MDX from "@/components/mdx";
 import { getPostData, getSiteData } from "@/lib/fetchers";
 import prisma from "@/lib/prisma";
 import { placeholderBlurhash, toDateString } from "@/lib/utils";
@@ -55,12 +53,6 @@ export async function generateStaticParams() {
           subdomain: true,
           customDomain: true,
         },
-      },
-    },
-    // feel free to remove this filter if you want to generate paths for all posts
-    where: {
-      site: {
-        subdomain: "demo",
       },
     },
   });
@@ -124,7 +116,6 @@ export default async function SitePostPage({
           <p className="text-md m-auto mb-6 text-stone-600 dark:text-stone-400 md:text-lg">
             {data.description}
           </p>
-          {/* ADD Summary here */}
           {!!data?.summary && (
             <p className="rounded bg-amber-400 p-4">
               <span className="text-xl font-bold">TL;DR</span>
@@ -167,33 +158,6 @@ export default async function SitePostPage({
           </a>
         </div>
       </div>
-
-      <div className="flex flex-col ">
-        <MDX source={data.mdxSource} />
-      </div>
-
-      {data.adjacentPosts.length > 0 && (
-        <div className="relative mb-20 mt-10 sm:mt-20">
-          <div
-            className="absolute inset-0 flex items-center"
-            aria-hidden="true"
-          >
-            <div className="w-full border-t border-stone-300 dark:border-stone-700" />
-          </div>
-          <div className="relative flex justify-center">
-            <span className="bg-white px-2 text-sm text-stone-500 dark:bg-black dark:text-stone-400">
-              Continue Reading
-            </span>
-          </div>
-        </div>
-      )}
-      {data.adjacentPosts && (
-        <div className="mx-5 mb-20 grid max-w-screen-xl grid-cols-1 gap-x-4 gap-y-8 md:grid-cols-2 xl:mx-auto xl:grid-cols-3">
-          {data.adjacentPosts.map((data: any, index: number) => (
-            <BlogCard key={index} data={data} />
-          ))}
-        </div>
-      )}
     </>
   );
 }

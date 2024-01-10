@@ -433,3 +433,431 @@ export const editUser = async (
     }
   }
 };
+
+export const addCommentToPost = async (data: {
+  postId: string;
+  content: string;
+}) => {
+  const session = await getSession();
+  if (!session?.user.id) {
+    return {
+      error: "Not authenticated",
+    };
+  }
+
+  if (!data.postId) {
+    return {
+      error: "PostID not provided",
+    };
+  }
+
+  try {
+    const post = await prisma.post.findUnique({
+      where: {
+        id: data.postId,
+      },
+      include: {
+        site: true,
+      },
+    });
+
+    if (!post || post.userId !== session.user.id) {
+      return {
+        error: "Post not found",
+      };
+    }
+    const response = await prisma.comment.create({
+      data: {
+        postId: data.postId,
+        userId: session.user.id,
+        content: data.content,
+      },
+    });
+    await revalidateTag(
+      `${post.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-${post.slug}`,
+    );
+    post.site?.customDomain &&
+      (await revalidateTag(`${post.site?.customDomain}-${post.slug}`));
+
+    return response;
+  } catch (error: any) {
+    return {
+      error: error.message,
+    };
+  }
+};
+
+export const checkIfSessionMatchesUser = async (userId: string) => {
+  const session = await getSession();
+  if (!session?.user.id) {
+    return { error: "Not authenticated" };
+  }
+  if (session.user.id !== userId) {
+    return { error: null, isMatch: false };
+  }
+  return { error: false, isMatch: true };
+};
+
+export const checkIfUserLikedComment = async (commentId: string) => {
+  const session = await getSession();
+
+  if (!session)
+    return {
+      error: "Not authenticated",
+    };
+
+  try {
+    const doesUserLikeComment = await prisma.like.findFirst({
+      where: {
+        commentId,
+        userId: session?.user?.id,
+      },
+    });
+
+    return {
+      doesUserLikeComment,
+      error: null,
+    };
+  } catch (error) {
+    return {
+      error,
+      doesUserLikeComment: null,
+    };
+  }
+};
+
+export const likeCommentMutation = async (commentId: string) => {
+  const session = await getSession();
+
+  if (!session?.user.id) {
+    return {
+      error: "Not authenticated",
+    };
+  }
+
+  try {
+    const comment = await prisma.comment.findUnique({
+      where: {
+        id: commentId,
+      },
+      include: {
+        likes: true,
+      },
+    });
+
+    if (!comment || !comment.postId) {
+      return {
+        error: "Comment not found",
+      };
+    }
+
+    const post = await prisma.post.findUnique({
+      where: {
+        id: comment.postId,
+      },
+      include: {
+        site: true,
+      },
+    });
+
+    if (!post) {
+      return {
+        error: "Post not found",
+      };
+    }
+
+    const foundLike = comment.likes.find(
+      (like) => like.userId === session.user.id,
+    );
+    // Delete like if already liked
+    if (foundLike) {
+      await prisma.like.delete({
+        where: {
+          id: foundLike.id,
+          user: {
+            id: session.user.id,
+          },
+        },
+      });
+      await revalidateTag(
+        `${post.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-${post.slug}`,
+      );
+      post.site?.customDomain &&
+        (await revalidateTag(`${post.site?.customDomain}-${post.slug}`));
+
+      return {
+        deleted: true,
+      };
+    }
+
+    const response = await prisma.like.create({
+      data: {
+        commentId,
+        userId: session.user.id,
+      },
+    });
+
+    await revalidateTag(
+      `${post.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-${post.slug}`,
+    );
+    post.site?.customDomain &&
+      (await revalidateTag(`${post.site?.customDomain}-${post.slug}`));
+
+    return response;
+  } catch (error: any) {
+    return {
+      error: error.message,
+    };
+  }
+};
+
+export const deleteCommentMutation = async (commentId: string) => {
+  const session = await getSession();
+  if (!session) {
+    return {
+      error: "Not authenticated",
+    };
+  }
+
+  try {
+    const comment = await prisma.comment.findUnique({
+      where: {
+        id: commentId,
+        userId: session.user.id,
+      },
+      include: {
+        post: true,
+      },
+    });
+
+    if (!comment || !comment.postId) {
+      return {
+        error: "Comment not found",
+      };
+    }
+
+    const post = await prisma.post.findUnique({
+      where: {
+        id: comment.postId,
+      },
+      include: {
+        site: true,
+      },
+    });
+
+    if (!post) {
+      return {
+        error: "Post not found",
+      };
+    }
+
+    const response = await prisma.comment.update({
+      where: {
+        id: commentId,
+        userId: session.user.id,
+      },
+      data: {
+        deleted: true,
+        content: "[comment deleted]",
+        deletedContent: comment.content,
+        updatedAt: new Date(),
+      },
+    });
+
+    await revalidateTag(
+      `${post.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-${post.slug}`,
+    );
+
+    post.site?.customDomain &&
+      (await revalidateTag(`${post.site?.customDomain}-${post.slug}`));
+
+    return response;
+  } catch (error) {
+    return {
+      error: JSON.stringify(error),
+    };
+  }
+};
+
+export async function getCommmentReplies(
+  slug: string,
+  commentId: string,
+  skip: number = 0,
+  take: number = 5,
+) {
+  try {
+    const session = await getSession();
+
+    if (!session?.user.id || !session) {
+      return {
+        error: "Not authenticated",
+        comment: null,
+      };
+    }
+
+    // going to need to recursively get replies
+    // this is just getting one level
+    const response = await prisma.comment.findUnique({
+      where: {
+        id: commentId,
+        post: {
+          slug,
+          published: true,
+        },
+      },
+      include: {
+        user: true,
+        likes: true,
+        replies: {
+          skip,
+          take,
+          include: {
+            user: true,
+            likes: true,
+            replies: {
+              include: {
+                user: true,
+                likes: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!response) {
+      return {
+        error: "Comment not found",
+        comment: null,
+      };
+    }
+
+    const post = await prisma.post.findUnique({
+      where: {
+        id: response?.postId as string,
+      },
+      include: {
+        site: true,
+      },
+    });
+
+    if (!post) {
+      return {
+        error: "Post not found",
+        comment: null,
+      };
+    }
+
+    await revalidateTag(
+      `${post.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-${post.slug}`,
+    );
+
+    post.site?.customDomain &&
+      (await revalidateTag(`${post.site?.customDomain}-${post.slug}`));
+
+    return {
+      error: null,
+      comment: response,
+    };
+  } catch (error) {
+    return {
+      error: JSON.stringify(error),
+      comment: null,
+    };
+  }
+}
+
+export async function addReplyToComment(commentId: string, content: string) {
+  try {
+    const session = await getSession();
+    if (!session?.user.id || !session) {
+      return {
+        error: "Not authenticated",
+        comment: null,
+      };
+    }
+
+    const foundComment = await prisma.comment.findUnique({
+      where: { id: commentId },
+    });
+
+    const post = await prisma.post.findUnique({
+      where: {
+        id: foundComment?.postId as string,
+      },
+      include: {
+        site: true,
+      },
+    });
+
+    if (!post) {
+      return {
+        error: "Post not found",
+        comment: null,
+      };
+    }
+
+    const response = await prisma.comment.create({
+      data: {
+        content,
+        userId: session.user.id,
+        replyingToCommentId: commentId,
+        postId: post.id,
+      },
+    });
+
+    const updatedCommentWithReply = await prisma.comment.update({
+      where: {
+        id: commentId,
+      },
+      data: {
+        replies: {
+          connect: {
+            id: response.id,
+          },
+        },
+      },
+      include: {
+        replies: true,
+        user: true,
+        likes: true,
+      },
+    });
+
+    await revalidateTag(
+      `${post.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-${post.slug}`,
+    );
+
+    post.site?.customDomain &&
+      (await revalidateTag(`${post.site?.customDomain}-${post.slug}`));
+
+    return {
+      error: null,
+      comment: updatedCommentWithReply,
+    };
+  } catch (error) {
+    return {
+      error: JSON.stringify(error),
+      comment: null,
+    };
+  }
+}
+
+//@DELETE just for testing
+export async function deleteAllComments(ids: string[]) {
+  try {
+    for await (const id of ids) {
+      const comment = await prisma.comment.delete({
+        where: {
+          id,
+        },
+      });
+    }
+
+    return;
+  } catch (error) {
+    return {
+      error: JSON.stringify(error),
+    };
+  }
+}

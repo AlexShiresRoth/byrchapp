@@ -18,7 +18,6 @@ export default function Editor({ post }: { post: PostWithSite }) {
   const [isChanged, setIsChanged] = useState(false);
   const [data, setData] = useState<PostWithSite>(post);
 
-  console.log("data", data, "post", post);
   useEffect(() => {
     if (data) {
       // this is only necessary because title and description are not updated in the editor

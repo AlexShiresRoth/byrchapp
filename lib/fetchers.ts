@@ -1,7 +1,7 @@
-import { unstable_cache } from "next/cache";
 import prisma from "@/lib/prisma";
-import { serialize } from "next-mdx-remote/serialize";
 import { replaceExamples, replaceTweets } from "@/lib/remark-plugins";
+import { serialize } from "next-mdx-remote/serialize";
+import { unstable_cache } from "next/cache";
 
 export async function getSiteData(domain: string) {
   const subdomain = domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
@@ -113,6 +113,122 @@ export async function getPostData(domain: string, slug: string) {
     {
       revalidate: 900, // 15 minutes
       tags: [`${domain}-${slug}`],
+    },
+  )();
+}
+
+export async function getPostComments(domain: string, slug: string) {
+  const subdomain = domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
+    ? domain.replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
+    : null;
+
+  return await unstable_cache(
+    async () => {
+      return prisma.comment.findMany({
+        where: {
+          post: {
+            site: subdomain ? { subdomain } : { customDomain: domain },
+            slug,
+            published: true,
+          },
+          replyingToCommentId: null,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          user: true,
+          likes: true,
+          replies: {
+            include: {
+              user: true,
+              likes: true,
+              replies: {
+                include: {
+                  user: true,
+                  likes: true,
+                },
+              },
+            },
+          },
+        },
+      });
+    },
+    [`${domain}-${slug}`],
+    {
+      revalidate: 900, // 15 minutes
+      tags: [`${domain}-${slug}`],
+    },
+  )();
+}
+
+export const fetchCommentWithReplies = async (
+  domain: string,
+  slug: string,
+  commentId: string,
+  skip?: number,
+  take?: number,
+) => {
+  return await unstable_cache(
+    async () => {
+      const foundComment = await prisma.comment.findUniqueOrThrow({
+        where: {
+          id: commentId,
+        },
+        include: {
+          user: true,
+          likes: true,
+          replies: {
+            skip,
+            take,
+            include: {
+              user: true,
+              likes: true,
+              replies: {
+                include: {
+                  user: true,
+                  likes: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      return foundComment;
+    },
+    [`${domain}-${slug}`],
+    {
+      revalidate: 900, // 15 minutes
+      tags: [`${domain}-${slug}`],
+    },
+  )();
+};
+
+export async function getNestedReplyLevel(commentId: string) {
+  return await unstable_cache(
+    async () => {
+      let levels = 0;
+      async function recursivelyGetComment(id: string): Promise<number> {
+        const foundComment = await prisma.comment.findUniqueOrThrow({
+          where: {
+            id,
+          },
+        });
+
+        if (foundComment?.replyingToCommentId) {
+          levels++;
+          return await recursivelyGetComment(foundComment.replyingToCommentId);
+        }
+
+        return levels;
+      }
+      return await recursivelyGetComment(commentId);
+    },
+    [`${commentId}`],
+    {
+      revalidate: 900, // 15 minutes
+      tags: [`${commentId}`],
     },
   )();
 }
