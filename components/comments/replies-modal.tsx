@@ -58,16 +58,23 @@ const RepliesModal = ({ reply, slug, domain }: Props) => {
     <AnimatePresence>
       {showReplyModal && (
         <motion.div
-          className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50"
+          className="overlay fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          data-modal="overlay"
+          onClick={(e) => {
+            if ((e.target as Element).classList.contains("overlay")) {
+              toggleReplyModal(false);
+            }
+          }}
         >
           <motion.div
-            className="relative mx-auto my-8 flex w-11/12 max-w-3xl flex-col rounded-lg bg-white p-6 shadow-2xl md:w-full"
+            className="relative mx-auto my-8 flex w-11/12 max-w-3xl flex-col overflow-y-auto rounded-lg bg-white p-6 shadow-2xl md:w-full"
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
+            data-modal="content"
           >
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-2xl font-semibold text-gray-800">Replies</h2>
@@ -86,19 +93,12 @@ const RepliesModal = ({ reply, slug, domain }: Props) => {
                 </svg>
               </button>
             </div>
-            <h3>Original comment</h3>
-            <div className="my-2 rounded bg-stone-100 p-4">
-              <>
-                <CommentUser commentData={reply} />
-                <CommentContent commentData={reply} />
-                <CommentActions
-                  isMatch={isMatch}
-                  commentData={reply}
-                  commentId={reply.id}
-                  allowReply={false}
-                />
-              </>
-            </div>
+            <ReplyingToComment
+              reply={reply}
+              slug={slug}
+              domain={domain}
+              isMatch={isMatch}
+            />
             <CommentReplies
               slug={slug}
               commentId={reply.id as string}
@@ -108,19 +108,7 @@ const RepliesModal = ({ reply, slug, domain }: Props) => {
               {commentWithReplies?.replies?.length &&
                 commentWithReplies?.replies.map((reply) => {
                   return (
-                    <div
-                      key={reply.id}
-                      className="my-2 border-l border-stone-200 pl-4"
-                    >
-                      <CommentUser commentData={reply} />
-                      <CommentContent commentData={reply} />
-                      <CommentActions
-                        isMatch={isMatch}
-                        commentData={reply}
-                        commentId={reply.id}
-                        allowReply={false}
-                      />
-                    </div>
+                    <Reply key={reply.id} reply={reply} isMatch={isMatch} />
                   );
                 })}
             </div>
@@ -129,6 +117,50 @@ const RepliesModal = ({ reply, slug, domain }: Props) => {
       )}
     </AnimatePresence>,
     document.body,
+  );
+};
+
+const ReplyingToComment = ({
+  reply,
+  isMatch,
+}: Props & { isMatch: boolean }) => {
+  return (
+    <>
+      <h3>Original comment</h3>
+      <div className="my-2 rounded bg-stone-100 p-4">
+        <>
+          <CommentUser commentData={reply} />
+          <CommentContent commentData={reply} />
+          <CommentActions
+            isMatch={isMatch}
+            commentData={reply}
+            commentId={reply.id}
+            allowReply={false}
+          />
+        </>
+      </div>
+    </>
+  );
+};
+
+const Reply = ({
+  reply,
+  isMatch,
+}: {
+  reply: CommentWithUser;
+  isMatch: boolean;
+}) => {
+  return (
+    <div key={reply.id} className="my-2 border-l border-stone-200 pl-4">
+      <CommentUser commentData={reply} />
+      <CommentContent commentData={reply} />
+      <CommentActions
+        isMatch={isMatch}
+        commentData={reply}
+        commentId={reply.id}
+        allowReply={false}
+      />
+    </div>
   );
 };
 

@@ -5,3 +5,9 @@
 .root :global(.react-tweet-theme) a {
   font-weight: 300;
 }
+
+@media  screen and (max-width: 768px) {
+.root p {
+    margin-bottom: 1rem;
+  }
+}
