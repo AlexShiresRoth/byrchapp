@@ -253,6 +253,8 @@ export const createPost = withSiteAuth(async (_: FormData, site: Site) => {
   );
   site.customDomain && (await revalidateTag(`${site.customDomain}-posts`));
 
+  await revalidateTag("post");
+
   return response;
 });
 
