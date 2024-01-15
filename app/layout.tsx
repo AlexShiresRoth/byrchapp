@@ -1,9 +1,9 @@
-import "@/styles/globals.css";
-import { cal, inter } from "@/styles/fonts";
-import { Analytics } from "@vercel/analytics/react";
-import { Providers } from "./providers";
-import { Metadata } from "next";
 import { cn } from "@/lib/utils";
+import { cal, inter } from "@/styles/fonts";
+import "@/styles/globals.css";
+import { Analytics } from "@vercel/analytics/react";
+import { Metadata } from "next";
+import { Providers } from "./providers";
 
 const title =
   "Platforms Starter Kit – The all-in-one starter kit for building multi-tenant applications.";
@@ -36,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="bg-stone-100">
       <body className={cn(cal.variable, inter.variable)}>
         <Providers>
           {children}

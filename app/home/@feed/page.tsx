@@ -2,6 +2,7 @@ import UserAvatarAndName from "@/components/user-avatar-name";
 import { getPosts } from "@/lib/post-fetchers";
 import { format } from "date-fns";
 import Image from "next/image";
+import Link from "next/link";
 
 /***
  * @todo: Fix link not working with subdomain
@@ -24,7 +25,7 @@ const page = async () => {
           <div className="flex flex-col gap-6">
             {posts.map((post) => {
               return (
-                <a
+                <Link
                   href={`${
                     process.env.VERCEL_ENV === "development" ? "http" : "https"
                   }://${post.site?.subdomain}.${
@@ -62,7 +63,7 @@ const page = async () => {
                       </span>
                     </div>
                   </div>
-                </a>
+                </Link>
               );
             })}
           </div>
