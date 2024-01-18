@@ -19,11 +19,11 @@ const FakeCategories: CategoryType<string>[] = [
 
 const Categories = () => {
   return (
-    <section className="flex gap-8 border-2 border-black">
+    <section className="flex w-full gap-8 border-2 border-black">
       <div className="bg-black p-8">
         <p className="text-xl font-semibold text-white">Categories</p>
       </div>
-      <div className="flex w-3/4 items-center justify-between pr-8">
+      <div className="flex w-full items-center justify-between pr-8">
         {FakeCategories.map((category) => {
           return (
             <Link

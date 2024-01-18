@@ -22,18 +22,18 @@ const layout = ({
   footer,
 }: Props<ReactNode>) => {
   return (
-    <>
+    <main className="container flex max-w-[1600px] flex-col">
       {/* {nav} */}
-      <div className="flex h-[90vh] items-center justify-center">
-        {feed}
-        {aside}
-      </div>
+      {aside}
       {categories}
-      {sites}
+      <div className="flex w-full border-b-2 border-b-black">
+        {feed}
+        {sites}
+      </div>
       {authors}
       {footer}
       {children}
-    </>
+    </main>
   );
 };
 

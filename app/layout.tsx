@@ -37,7 +37,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning className="bg-stone-100">
-      <body className={cn(cal.variable, inter.variable)}>
+      <body
+        className={cn(
+          cal.variable,
+          inter.variable,
+          "flex flex-col items-center",
+        )}
+      >
         <Providers>
           {children}
           <Analytics />

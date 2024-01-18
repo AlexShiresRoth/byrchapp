@@ -16,9 +16,9 @@ const page = async () => {
   if (!posts) return null;
 
   return (
-    <section className="flex h-full w-full flex-[.60] flex-col items-center justify-center bg-stone-100">
-      <div className="flex w-3/4 flex-col ">
-        <h2 className="my-8 border-b-2 border-black text-2xl font-bold">
+    <section className="flex w-full flex-col items-center justify-center bg-stone-100 py-12">
+      <div className="flex flex-col">
+        <h2 className=" mb-8 border-b-2 border-black text-2xl font-bold">
           Featured Articles
         </h2>
         {!!posts?.length && (

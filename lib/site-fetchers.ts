@@ -5,7 +5,7 @@ export async function getTopSites() {
   return await unstable_cache(
     async () => {
       return await prisma.site.findMany({
-        take: 4,
+        take: 3,
         orderBy: {
           createdAt: "desc",
         },
