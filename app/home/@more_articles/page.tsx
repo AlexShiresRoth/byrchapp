@@ -11,16 +11,25 @@ import Link from "next/link";
  */
 
 const page = async () => {
-  const posts = await getPosts({ take: 4 });
+  const posts = await getPosts({ take: 3 });
 
   if (!posts) return null;
 
+  /***
+   * @todo: This is temp data until we have more posts
+   * @description: This is temp data until we have more posts
+   ***/
+  const repeatedPosts = [...posts, ...posts, ...posts, ...posts];
+
   return (
-    <section className="flex w-full flex-1 flex-col items-center  bg-stone-100">
-      <div className="flex  flex-col">
+    <section className="flex w-2/3 flex-col items-center justify-center bg-stone-100 py-12">
+      <div className="mb-4 flex w-full">
+        <h2 className="text-2xl font-bold">Recommended</h2>
+      </div>
+      <div className="flex w-full flex-col">
         {!!posts?.length && (
           <div className="flex flex-col gap-12">
-            {posts.map((post) => {
+            {repeatedPosts.map((post) => {
               return (
                 <Link
                   href={`${
@@ -32,13 +41,15 @@ const page = async () => {
                   className="flex w-full items-center gap-8"
                 >
                   {!!post.image && (
-                    <Image
-                      src={post.image as string}
-                      width={200}
-                      height={200}
-                      alt={post.title as string}
-                      className="rounded"
-                    />
+                    <div>
+                      <Image
+                        src={post.image as string}
+                        width={200}
+                        height={200}
+                        alt={post.title as string}
+                        className="rounded"
+                      />
+                    </div>
                   )}
                   <div>
                     <UserAvatarAndName

@@ -1,5 +1,4 @@
 import { getTopSites } from "@/lib/site-fetchers";
-import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,22 +7,22 @@ const page = async () => {
   const sites = await getTopSites();
 
   return (
-    <section className="flex w-full justify-center border-l-2 border-black bg-emerald-500 py-8">
-      <div className="flex flex-col">
-        <div className="mb-4">
+    <section className="flex w-full flex-1 justify-center border-b-2 border-t-2 border-black bg-emerald-500 py-12">
+      <div className="flex w-full flex-col items-center">
+        <div className="mb-4 w-3/4">
           <h2 className="text-2xl font-bold text-stone-800">Top Sites</h2>
         </div>
         {!!sites?.length && (
-          <div className="flex flex-col gap-4 border-black">
+          <div className="flex w-3/4 justify-between gap-12 border-black">
             {sites.map((site) => {
               return (
-                <div key={site.id} className={cn("flex items-center ")}>
-                  <div className="flex items-start justify-between gap-6">
+                <div key={site.id} className="flex items-center ">
+                  <div className="flex flex-col items-start justify-between gap-6">
                     {site.image && (
                       <Image
                         src={site.image as string}
-                        width={200}
-                        height={200}
+                        width={250}
+                        height={250}
                         alt={site.name as string}
                         className="rounded"
                       />

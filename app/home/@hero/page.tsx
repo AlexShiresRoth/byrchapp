@@ -3,8 +3,8 @@ import Link from "next/link";
 
 const page = () => {
   return (
-    <section className="flex w-full flex-col items-center justify-center bg-amber-400 py-12">
-      <div className="flex w-11/12 flex-col p-8">
+    <section className="flex w-full flex-grow flex-col items-center justify-center bg-amber-400 py-12">
+      <div className="flex w-3/4 flex-col py-8">
         <div className="flex w-full items-center gap-8 py-4 font-semibold">
           <Link href={"/"} className="font-extrabold">
             Home

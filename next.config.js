@@ -3,18 +3,53 @@
  */
 module.exports = {
   images: {
-    domains: [
-      "wdl83yzlweuyqze5.public.blob.vercel-storage.com",
-      "public.blob.vercel-storage.com",
-      "res.cloudinary.com",
-      "abs.twimg.com",
-      "pbs.twimg.com",
-      "avatar.vercel.sh",
-      "avatars.githubusercontent.com",
-      "www.google.com",
-      "flag.vercel.app",
-      "illustrations.popsy.co",
+    remotePatterns: [
+      {
+        hostname: "images.unsplash.com",
+        protocol: "https",
+      },
+      { 
+        hostname: "wdl83yzlweuyqze5.public.blob.vercel-storage.com",
+        protocol: "https",
+      },
+      {
+        hostname: "public.blob.vercel-storage.com",
+        protocol: "https",
+      },
+      {
+        hostname: "res.cloudinary.com",
+        protocol: "https",
+      },
+      {
+        hostname: "abs.twimg.com",
+        protocol: "https",
+      },
+      {
+        hostname: "pbs.twimg.com",
+        protocol: "https",
+      },
+      {
+        hostname: "avatar.vercel.sh",
+        protocol: "https",
+      },
+      {
+        hostname: "avatars.githubusercontent.com",
+        protocol: "https",
+      },
+      {
+        hostname: "www.google.com",
+        protocol: "https",
+      },
+      {
+        hostname: "flag.vercel.app",
+        protocol: "https",
+      },
+      {
+        hostname: "illustrations.popsy.co",
+        protocol: "https",
+      },
     ],
+  
   },
   reactStrictMode: false,
 };
