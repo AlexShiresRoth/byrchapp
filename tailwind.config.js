@@ -145,9 +145,23 @@ module.exports = {
           "60%": { transform: "translateX(3px) rotate(2.4deg)" },
           "75%": { transform: "translateX(-2px) rotate(-1.2deg)" },
         },
+        move: {
+          "0%": {
+            transform: "translateX(-1000px)",
+          },
+          "100%": { transform: "translateX(2000px)" },
+        },
+          move2: {
+          "0%": {
+            transform: "translateX(-1000px)",
+          },
+          "100%": { transform: "translateX(2200px)" },
+        },
       },
       animation: {
         wiggle: "wiggle 0.8s both",
+        move: "move 15s ease-in-out infinite alternate",
+        move2: "move2 20s ease-in-out infinite alternate",
       },
     },
   },

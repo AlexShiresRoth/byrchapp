@@ -22,20 +22,17 @@ const ArticleCard = ({ data }: Props<PostWithSite>) => {
       className="flex w-full items-center gap-8"
     >
       {!!data.image && (
-        <div>
-          <Image
-            src={data.image as string}
-            width={200}
-            height={200}
-            alt={data.title as string}
-            className="rounded"
-          />
-        </div>
+        <Image
+          src={data.image as string}
+          width={230}
+          height={200}
+          alt={data.title as string}
+        />
       )}
-      <div>
+      <div className="block">
         <UserAvatarAndName image={data.user?.image} name={data.user?.name} />
         <h3 className="text-xl font-semibold text-stone-600">{data.title}</h3>
-        <p className="text-stone-500">{data.description}</p>
+        <p className=" text-stone-500">{data.description}</p>
         <div className="flex items-center gap-2">
           <p className="text-sm text-stone-400">
             {format(new Date(data.createdAt), "PP")}

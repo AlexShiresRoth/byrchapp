@@ -26,27 +26,22 @@ const page = async () => {
               process.env.NEXT_PUBLIC_ROOT_DOMAIN
             }/${post.slug}`}
             key={post.id}
-            className="flex w-full flex-col gap-4"
+            className="flex w-full flex-col gap-4 border-2 border-black p-8"
           >
             {!!post.image && (
-              <div>
-                <Image
-                  src={post.image as string}
-                  width={570}
-                  height={970}
-                  alt={post.title as string}
-                  className="rounded"
-                />
-              </div>
+              <Image
+                src={post.image as string}
+                width={570}
+                height={970}
+                alt={post.title as string}
+              />
             )}
             <div>
               <UserAvatarAndName
                 image={post.user?.image}
                 name={post.user?.name}
               />
-              <h2 className="text-4xl font-bold text-stone-600">
-                {post.title}
-              </h2>
+              <h2 className="text-4xl font-bold text-black">{post.title}</h2>
               <p className="text-stone-500">{post.description}</p>
               <div className="flex items-center gap-2">
                 <p className="text-sm text-stone-400">

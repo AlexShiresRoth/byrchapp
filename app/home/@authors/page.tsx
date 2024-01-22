@@ -51,9 +51,11 @@ const fakeAuthorData: AuthorType<string>[] = [
 
 const Authors = () => {
   return (
-    <section className="flex min-h-full w-1/3  flex-col items-center py-12">
-      <div className="sticky top-5 flex flex-col gap-12">
-        <h2 className="text-2xl font-bold text-stone-800">Featured Authors</h2>
+    <section className="flex min-h-full w-1/3 flex-col items-center py-12">
+      <div className=" sticky top-20 flex flex-col">
+        <h2 className="mb-4 text-2xl font-bold text-stone-800">
+          Featured Authors
+        </h2>
         <div className="flex flex-col gap-6">
           {fakeAuthorData.map((author) => {
             return (

@@ -14,6 +14,7 @@ type Props<T> = {
 };
 
 const layout = ({
+  nav,
   children,
   feed,
   hero,
@@ -25,7 +26,8 @@ const layout = ({
   featured,
 }: Props<ReactNode>) => {
   return (
-    <main className="container flex max-w-[1600px] flex-wrap">
+    <main className="container flex max-w-[1600px] flex-wrap overflow-x-hidden">
+      {nav}
       {hero}
       {categories}
       <div className="flex w-full flex-col items-center">
