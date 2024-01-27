@@ -1,5 +1,4 @@
 import BackgroundShapes from "@/components/art/background-shapes";
-import FlyingCar, { FlyingCar2 } from "@/components/art/flying-car";
 import H1 from "@/components/heading/H1";
 import Link from "next/link";
 
@@ -34,8 +33,7 @@ const page = () => {
           </div>
         </div>
       </div>
-      <FlyingCar />
-      <FlyingCar2 />
+
       <BackgroundShapes />
     </section>
   );

@@ -1,6 +1,14 @@
 "use client";
-import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
+import {
+  BuildingFour,
+  BuildingOne,
+  BuildingThree,
+  BuildingTwo,
+  Tower,
+  TowerTwo,
+} from "./buildings";
+import FlyingCar, { FlyingCar2, FlyingCar3 } from "./flying-car";
 import Shrub from "./shrub";
 import Tree from "./tree";
 import TreeBig from "./tree-big";
@@ -60,90 +68,32 @@ const Canvas = ({ children }: Props<ReactNode>) => {
   );
 };
 
-type WindowProps = {
-  color: "bg-amber-500" | "bg-rose-400";
-  bottomColor: string;
-};
-
-const SmallWindow = (props: WindowProps) => (
-  <span
-    className={cn("h-4 w-4 border-b-4", {
-      [props.color]: true,
-      [props.bottomColor]: true,
-    })}
-  ></span>
-);
-
-const WindowGrid = (props: WindowProps) => (
-  <>
-    <span className="-ml-[7px] block h-3 w-[85px] rounded-sm bg-gray-800"></span>
-    <div className="grid w-full grid-cols-3 justify-items-center gap-1">
-      <SmallWindow color={props.color} bottomColor={props.bottomColor} />
-      <SmallWindow color={props.color} bottomColor={props.bottomColor} />
-      <SmallWindow color={props.color} bottomColor={props.bottomColor} />
-    </div>
-  </>
-);
-
-const BuildingOne = () => (
-  <span className="relative ml-4 flex h-64 w-20 flex-col gap-1 bg-black p-1">
-    <span className="absolute bottom-[100%] left-0 h-6 w-full rounded-tr-full bg-black" />
-    <WindowGrid color="bg-rose-400" bottomColor="border-b-gray-600" />
-    <WindowGrid color="bg-rose-400" bottomColor="border-b-gray-600" />
-    <WindowGrid color="bg-rose-400" bottomColor="border-b-gray-600" />
-    <WindowGrid color="bg-rose-400" bottomColor="border-b-gray-600" />
-    <WindowGrid color="bg-rose-400" bottomColor="border-b-gray-600" />
-    <WindowGrid color="bg-rose-400" bottomColor="border-b-gray-600" />
-    <div className="absolute bottom-0 left-0 flex w-full justify-around gap-1 px-1">
-      <span className="h-3 w-3 bg-rose-400" />
-      <span className="h-5 w-2 border-b-4 border-b-gray-500 bg-rose-400" />
-      <span className="h-3 w-3 bg-rose-400" />
-    </div>
-  </span>
-);
-
 const BackgroundShapes = () => {
   return (
     <Canvas>
-      <BuildingOne />
+      {/* Cars */}
+      <FlyingCar />
+      <FlyingCar2 />
+      <FlyingCar3 />
+      {/* Buildings */}
+      <BuildingOne xCoord="left-2" />
+      <BuildingTwo xCoord="left-[6.5vw]" />
+      <BuildingThree xCoord="left-[12vw]" />
+      <BuildingFour xCoord="left-[82vw]" />
+      <Tower xCoord="left-[90.5vw]" />
+      <TowerTwo xCoord="left-[75vw]" />
+      {/* Trees */}
+      <TreeBig xCoord="-right-2" />
       <TreeBig xCoord="-left-1" />
       <Tree xCoord="left-[7vw]" />
-      <TreeBig xCoord="left-[20vw]" />
+      <Tree xCoord="left-[68vw]" />
+      <Tree xCoord="left-[72vw]" />
+      <Tree xCoord="left-[80vw]" />
+      <Tree xCoord="left-[92vw]" />
+      <TreeBig xCoord="left-[70vw]" />
       <Shrub xCoord="left-[13.5vw]" />
-      <span className="relative ml-8 grid h-60 w-16 grid-cols-2 items-center justify-items-center gap-1   bg-black p-1">
-        <span className="absolute bottom-[100%] left-4 h-4 w-1 border-t-4 border-t-red-700 bg-black" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-      </span>
-      <span className="relative ml-6 grid h-48 w-20 grid-cols-2 items-center justify-items-center gap-1  bg-black p-1">
-        <span className="absolute bottom-[100%] left-4 h-4 w-1 border-t-4 border-t-red-700 bg-black" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-        <span className="h-4 w-4  bg-amber-400" />
-      </span>
+      <Shrub xCoord="left-[89.5vw]" />
+      <Shrub xCoord="left-[83.5vw]" />
     </Canvas>
   );
 };

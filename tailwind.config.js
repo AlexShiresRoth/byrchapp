@@ -151,17 +151,24 @@ module.exports = {
           },
           "100%": { transform: "translateX(2000px)" },
         },
-          move2: {
+        move2: {
           "0%": {
             transform: "translateX(-1000px)",
           },
           "100%": { transform: "translateX(2200px)" },
+        },
+        move3: {
+          "0%": {
+            transform: "translateX(120vw)",
+          },
+          "100%": { transform: "translateX(-50vw)" },
         },
       },
       animation: {
         wiggle: "wiggle 0.8s both",
         move: "move 15s ease-in-out infinite alternate",
         move2: "move2 20s ease-in-out infinite alternate",
+        move3: "move3 17s ease-in-out infinite alternate",
       },
     },
   },
