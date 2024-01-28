@@ -145,6 +145,18 @@ module.exports = {
           "60%": { transform: "translateX(3px) rotate(2.4deg)" },
           "75%": { transform: "translateX(-2px) rotate(-1.2deg)" },
         },
+        cloud: {
+          "0%": {
+            transform: "translateX(-10vw)",
+          },
+          "100%": { transform: "translateX(105vw)" },
+        },
+        cloud2: {
+          "0%": {
+            transform: "translateX(-15vw)",
+          },
+          "100%": { transform: "translateX(110vw)" },
+        },
         move: {
           "0%": {
             transform: "translateX(-1000px)",
@@ -169,6 +181,9 @@ module.exports = {
         move: "move 15s ease-in-out infinite alternate",
         move2: "move2 20s ease-in-out infinite alternate",
         move3: "move3 17s ease-in-out infinite alternate",
+        cloud: "cloud 100s ease-in-out infinite",
+        cloud2: "cloud2 90s ease-in-out infinite",
+        cloud3: "cloud 80s ease-in-out infinite",
       },
     },
   },

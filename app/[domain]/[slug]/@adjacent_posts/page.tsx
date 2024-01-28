@@ -33,7 +33,7 @@ const Page = async ({ params }: Props) => {
       )}
       {data.adjacentPosts && (
         <div className="mx-5 mb-20 grid max-w-screen-xl grid-cols-1 gap-x-4 gap-y-8 md:grid-cols-2 xl:mx-auto xl:grid-cols-3">
-          {data.adjacentPosts.map((data: any, index: number) => (
+          {data.adjacentPosts.map((data, index: number) => (
             <BlogCard key={index} data={data} />
           ))}
         </div>
