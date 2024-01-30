@@ -2,6 +2,10 @@
  * @type {import('next').NextConfig}
  */
 module.exports = {
+  logging: {
+    level: "info",
+    fetches: true,
+  },
   images: {
     remotePatterns: [
       {
