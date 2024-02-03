@@ -26,7 +26,7 @@ const layout = ({
   featured,
 }: Props<ReactNode>) => {
   return (
-    <main className="container flex max-w-[1600px] flex-wrap overflow-x-hidden">
+    <main className="container flex max-w-[1600px] flex-wrap">
       {nav}
       {hero}
       {categories}

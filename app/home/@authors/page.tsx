@@ -51,8 +51,8 @@ const fakeAuthorData: AuthorType<string>[] = [
 
 const Authors = () => {
   return (
-    <section className="flex min-h-full w-1/3 flex-col items-center py-12">
-      <div className=" sticky top-20 flex flex-col">
+    <section className="relative top-0 h-full w-1/3 items-center  py-12">
+      <div className="sticky top-20">
         <h2 className="mb-4 text-2xl font-bold text-stone-800">
           Featured Authors
         </h2>

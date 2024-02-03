@@ -41,7 +41,7 @@ export default function RootLayout({
         className={cn(
           cal.variable,
           inter.variable,
-          "flex flex-col items-center",
+          "flex flex-col items-center overflow-x-hidden",
         )}
       >
         <Providers>
