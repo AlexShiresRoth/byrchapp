@@ -1,4 +1,7 @@
 import BlurImage from "@/components/blur-image";
+import AdjacentPosts from "@/components/post/adjacent-posts";
+import PostComments from "@/components/post/post-comments";
+import PostContent from "@/components/post/post-content";
 import { getPostData, getSiteData } from "@/lib/fetchers";
 import prisma from "@/lib/prisma";
 import { placeholderBlurhash, toDateString } from "@/lib/utils";
@@ -70,7 +73,6 @@ export async function generateStaticParams() {
       },
     ])
     .filter(Boolean);
-
   return allPaths;
 }
 
@@ -158,6 +160,9 @@ export default async function SitePostPage({
           </a>
         </div>
       </div>
+      <PostContent params={params} />
+      <PostComments params={params} />
+      <AdjacentPosts params={params} />
     </>
   );
 }

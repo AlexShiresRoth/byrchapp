@@ -1,11 +1,11 @@
-import BlogCard from "@/components/blog-card";
 import { getPostData } from "@/lib/fetchers";
 import { notFound } from "next/navigation";
+import BlogCard from "../blog-card";
 
 type Props = {
   params: { slug: string; domain: string };
 };
-const Page = async ({ params }: Props) => {
+const AdjacentPosts = async ({ params }: Props) => {
   const domain = decodeURIComponent(params.domain);
   const slug = decodeURIComponent(params.slug);
   const data = await getPostData(domain, slug);
@@ -42,4 +42,4 @@ const Page = async ({ params }: Props) => {
   );
 };
 
-export default Page;
+export default AdjacentPosts;

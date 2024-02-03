@@ -6,7 +6,7 @@ type Props = {
   params: { slug: string; domain: string };
 };
 
-const page = async ({ params }: Props) => {
+const PostContent = async ({ params }: Props) => {
   const domain = decodeURIComponent(params.domain);
   const slug = decodeURIComponent(params.slug);
   const data = await getPostData(domain, slug);
@@ -22,4 +22,4 @@ const page = async ({ params }: Props) => {
   );
 };
 
-export default page;
+export default PostContent;
