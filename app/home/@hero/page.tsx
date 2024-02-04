@@ -4,13 +4,13 @@ import Link from "next/link";
 
 const page = () => {
   return (
-    <section className="relative flex w-full flex-grow flex-col items-center justify-center bg-amber-400 pb-12 pt-16">
-      <div className="relative z-20 flex w-3/4 justify-between py-16">
-        <div className="relative z-10 w-2/3 ">
-          <div className="relative z-10 border-2 border-black bg-amber-400 p-8">
+    <section className="relative flex w-full flex-grow flex-col items-center justify-center overflow-x-hidden bg-amber-400 pb-12 pt-16">
+      <div className="relative z-20 flex w-full justify-center pb-8 pt-16 md:w-3/4 md:justify-between md:py-16 md:pb-16">
+        <div className="relative z-10 w-11/12 md:w-2/3 ">
+          <div className="relative z-10 border-2 border-black bg-amber-400 p-4 md:p-8">
             <div className="flex w-full flex-col gap-4">
               <H1>
-                <span className="-ml-2 uppercase">Welcome to Byrch.app</span>
+                <span className="uppercase md:-ml-2">Welcome to Byrch.app</span>
               </H1>
               <p className="text-xl text-stone-900">
                 Discover & create things that interest you
@@ -33,7 +33,6 @@ const page = () => {
           </div>
         </div>
       </div>
-
       <BackgroundShapes />
     </section>
   );

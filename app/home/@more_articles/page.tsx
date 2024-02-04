@@ -19,13 +19,13 @@ const page = async () => {
   const repeatedPosts = [...posts, ...posts, ...posts, ...posts];
 
   return (
-    <section className="flex w-2/3 flex-col items-center justify-center bg-stone-100 py-12">
+    <section className="flex w-full flex-col items-center justify-center bg-stone-100 py-12 md:w-2/3">
       <div className="mb-4 flex w-full">
         <h2 className="text-2xl font-bold">Recommended</h2>
       </div>
       <div className="flex w-full flex-col">
         {!!posts?.length && (
-          <div className="flex flex-col gap-12">
+          <div className="flex w-full flex-col gap-12">
             {repeatedPosts.map((post) => {
               return <ArticleCard data={post as PostWithSite} key={post.id} />;
             })}

@@ -51,7 +51,7 @@ const fakeAuthorData: AuthorType<string>[] = [
 
 const Authors = () => {
   return (
-    <section className="relative top-0 h-full w-1/3 items-center  py-12">
+    <section className="relative top-0 h-full w-full items-center py-12 md:w-1/3">
       <div className="sticky top-20">
         <h2 className="mb-4 text-2xl font-bold text-stone-800">
           Featured Authors
@@ -60,7 +60,24 @@ const Authors = () => {
           {fakeAuthorData.map((author) => {
             return (
               <div key={author.id} className="flex flex-col">
-                <UserAvatarAndName image={author.image} name={author.name} />
+                {/* @NOTE instead of using client js just use 2 separate pieces of html to render smaller and larger avatars */}
+                <div className="hidden md:block" data-type="wide-screen-avatar">
+                  <UserAvatarAndName
+                    image={author.image}
+                    name={author.name}
+                    imageSize="small"
+                  />
+                </div>
+                <div
+                  className="block md:hidden"
+                  data-type="small-screen-avatar"
+                >
+                  <UserAvatarAndName
+                    image={author.image}
+                    name={author.name}
+                    imageSize="x-large"
+                  />
+                </div>
                 <div>
                   <p className="max-w-sm text-stone-500">{author.bio}</p>
                 </div>

@@ -13,18 +13,18 @@ const page = async () => {
           <h2 className="text-2xl font-bold text-stone-800">Top Sites</h2>
         </div>
         {!!sites?.length && (
-          <div className="flex w-3/4 justify-between gap-12 border-black">
+          <div className="flex w-11/12 flex-col justify-between gap-12 border-black md:w-3/4 md:flex-row">
             {sites.map((site) => {
               return (
                 <div key={site.id} className="flex items-center ">
-                  <div className="flex flex-col items-start justify-between gap-6">
+                  <div className="flex w-full flex-col items-start justify-between gap-6">
                     {site.image && (
                       <Image
                         src={site.image as string}
                         width={250}
                         height={250}
                         alt={site.name as string}
-                        className="rounded"
+                        className="w-full rounded md:w-auto"
                       />
                     )}
                     <div className="flex flex-col gap-2">

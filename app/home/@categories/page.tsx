@@ -19,27 +19,29 @@ const FakeCategories: CategoryType<string>[] = [
 
 const Categories = () => {
   return (
-    <section className="flex w-full justify-center gap-8 border-2 border-black">
-      <div className="flex w-3/4 items-center justify-between">
-        <div className="bg-black p-4">
+    <section className="flex w-full max-w-[100vw] justify-center border-2 border-black ">
+      <div className="flex min-w-full items-center justify-between overflow-x-scroll md:overflow-x-hidden">
+        <div className="bg-black p-2 md:p-4">
           <p className="font-semibold text-white">Categories</p>
         </div>
-        {FakeCategories.map((category, index) => {
-          return (
-            <>
-              <Link
-                href={category.href}
-                className="p-4 font-semibold"
-                key={category.category}
-              >
-                {category.category}
-              </Link>
-              {index !== FakeCategories.length - 1 && (
-                <span className="text-lg font-semibold">/</span>
-              )}
-            </>
-          );
-        })}
+        <div className="flex min-w-full items-center gap-2">
+          {FakeCategories.map((category, index) => {
+            return (
+              <>
+                <Link
+                  href={category.href}
+                  className="whitespace-nowrap p-2 text-sm font-semibold md:p-4 md:text-base"
+                  key={category.category}
+                >
+                  {category.category}
+                </Link>
+                {index !== FakeCategories.length - 1 && (
+                  <span className="text-lg font-semibold">/</span>
+                )}
+              </>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

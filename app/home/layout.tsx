@@ -31,12 +31,12 @@ const layout = ({
       {hero}
       {categories}
       <div className="flex w-full flex-col items-center">
-        <div className="flex w-3/4 gap-12 py-12">
+        <div className="flex w-11/12 flex-col gap-12 py-12 md:w-3/4 md:flex-row">
           {featured}
           {feed}
         </div>
         <div className="w-full">{sites}</div>
-        <div className="flex w-3/4">
+        <div className="flex w-11/12 flex-col md:w-3/4 md:flex-row">
           {more_articles}
           {authors}
         </div>

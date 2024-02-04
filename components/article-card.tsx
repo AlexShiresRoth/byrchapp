@@ -19,7 +19,7 @@ const ArticleCard = ({ data }: Props<PostWithSite>) => {
         data.site?.subdomain
       }.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/${data.slug}`}
       key={data.id}
-      className="flex w-full items-center gap-8"
+      className="flex w-full flex-col  gap-8 md:flex-row"
     >
       {!!data.image && (
         <Image
@@ -27,6 +27,7 @@ const ArticleCard = ({ data }: Props<PostWithSite>) => {
           width={230}
           height={200}
           alt={data.title as string}
+          className="w-full md:w-auto"
         />
       )}
       <div className="block">
