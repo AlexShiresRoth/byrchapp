@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const page = () => {
   return (
-    <section className="relative flex w-full flex-grow flex-col items-center justify-center overflow-x-hidden bg-amber-400 pb-12 pt-16">
+    <section className="container-snap relative flex w-full flex-grow flex-col items-center justify-center overflow-x-hidden bg-amber-400 pb-12 pt-16">
       <div className="relative z-20 flex w-full justify-center pb-8 pt-16 md:w-3/4 md:justify-between md:py-16 md:pb-16">
         <div className="relative z-10 w-11/12 md:w-2/3 ">
           <div className="relative z-10 border-2 border-black bg-amber-400 p-4 md:p-8">

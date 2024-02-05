@@ -12,6 +12,16 @@
   .overflow-hidden {
     -webkit-mask-image: -webkit-radial-gradient(white, black);
   }
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .container-snap::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .container-snap {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
 }
 
 .ProseMirror .is-editor-empty:first-child::before {

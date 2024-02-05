@@ -19,7 +19,10 @@ const FakeCategories: CategoryType<string>[] = [
 
 const Categories = () => {
   return (
-    <section className="flex w-full max-w-[100vw] justify-center border-2 border-black ">
+    <section
+      data-type="of-container"
+      className="container-snap flex w-full max-w-[100vw] justify-center border-2 border-black "
+    >
       <div className="flex min-w-full items-center justify-between overflow-x-scroll md:overflow-x-hidden">
         <div className="bg-black p-2 md:p-4">
           <p className="font-semibold text-white">Categories</p>
