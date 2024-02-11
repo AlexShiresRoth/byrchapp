@@ -1,6 +1,6 @@
-import BlogCard from "@/components/blog-card";
 import { getPostData } from "@/lib/fetchers";
 import { notFound } from "next/navigation";
+import BlogCard from "../blog-card";
 
 type Props = {
   params: { slug: string; domain: string };

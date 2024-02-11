@@ -17,7 +17,7 @@ const PostComments = async ({ params }: Props) => {
     notFound();
   }
 
-  const commentsData = await getPostComments(domain, slug);
+  const commentsData = await getPostComments(params.domain, params.slug);
 
   return (
     <PostCommentClientWrapper
@@ -49,10 +49,10 @@ const PostComments = async ({ params }: Props) => {
         <div className="flex w-11/12 flex-col md:w-full">
           {commentsData.map((comment) => (
             <Comment
-              slug={slug}
+              slug={params.slug}
               key={comment.id}
               commentData={comment as CommentWithUser}
-              domain={domain}
+              domain={params.domain}
             />
           ))}
         </div>

@@ -1,22 +1,25 @@
 import { ReactNode } from "react";
 
-export default function PostLayout({
+type Props<T> = {
+  children: T;
+  adjacent_posts: T;
+  comments: T;
+  content: T;
+};
+
+const layout = ({
   children,
-  comment,
-  content,
   adjacent_posts,
-}: {
-  children: ReactNode;
-  comment: ReactNode;
-  content: ReactNode;
-  adjacent_posts: ReactNode;
-}) {
+  comments,
+  content,
+}: Props<ReactNode>) => {
   return (
     <>
       {children}
       {content}
-      {comment}
-      {adjacent_posts}
+      {comments} {adjacent_posts}
     </>
   );
-}
+};
+
+export default layout;

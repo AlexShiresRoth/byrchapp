@@ -44,6 +44,7 @@ export async function generateMetadata({
   };
 }
 
+// This code is causing build errors, not finding the posts
 export async function generateStaticParams() {
   const allPosts = await prisma.post.findMany({
     select: {
@@ -60,17 +61,19 @@ export async function generateStaticParams() {
   const allPaths = allPosts
     // @ts-ignore
     .flatMap(({ site, slug }) => [
-      site?.subdomain && {
-        domain: `${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`,
-        slug,
-      },
-      site?.customDomain && {
-        domain: site.customDomain,
+      // site?.subdomain && {
+      //   domain: `${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`,
+      //   slug,
+      // },
+      // site?.customDomain && {
+      //   domain: site.customDomain,
+      //   slug,
+      // },
+      {
         slug,
       },
     ])
     .filter(Boolean);
-
   return allPaths;
 }
 
