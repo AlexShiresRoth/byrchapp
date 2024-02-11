@@ -89,10 +89,18 @@ model Post {
   userId        String?
   comments      Comment[]
   category      String?   @db.Text
+  categoryId    String?
+  categoryRef   Category? @relation(fields: [categoryId], references: [id])
 
   @@unique([slug, siteId])
   @@index([siteId])
   @@index([userId])
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  posts       Post[]
 }
 
 model Comment {

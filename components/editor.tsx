@@ -49,7 +49,7 @@ export default function Editor({ post }: { post: PostWithSite }) {
   }, [data, startTransitionSaving]);
 
   return (
-    <div className="relative min-h-[500px] w-full max-w-screen-lg border-amber-100 p-12 px-8 dark:border-stone-700 sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:px-12 sm:shadow-lg">
+    <div className="relative min-h-[500px] w-full max-w-screen-lg border-amber-100 p-12 px-8 sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:px-12 sm:shadow-lg dark:border-stone-700">
       <PostButtons
         data={data}
         setData={setData}
@@ -113,7 +113,9 @@ export default function Editor({ post }: { post: PostWithSite }) {
           if (
             data.title === post.title &&
             data.description === post.description &&
-            data.content === post.content
+            data.content === post.content &&
+            data.summary === post.summary &&
+            data.category === post.category
           ) {
             return;
           }
