@@ -1,4 +1,5 @@
 import Link from "next/link";
+import MobileMenu from "./mobile-menu";
 
 const Nav = () => {
   return (
@@ -24,14 +25,7 @@ const Menu = () => {
         <Link href={"/login"}>Login</Link>
         <Link href={"/signup"}>Signup</Link>
       </div>
-      <div className="flex md:hidden"></div>
-      <Link
-        href="/modal/menu"
-        passHref
-        className="border-2 border-black px-2 py-1 font-semibold "
-      >
-        Menu
-      </Link>
+      <MobileMenu />
     </>
   );
 };

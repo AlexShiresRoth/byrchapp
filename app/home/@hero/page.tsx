@@ -19,13 +19,13 @@ const page = () => {
             <div className="my-8 flex gap-4">
               <Link
                 href="/signup"
-                className="flex border-2 border-black bg-emerald-500 px-6 py-4 text-lg font-semibold text-black shadow-[5px_5px_0_0_black] transition-all hover:shadow-[0px_0px_0_0_black]"
+                className="flex border-2 border-black bg-emerald-500 px-4 py-2 font-semibold text-black shadow-[5px_5px_0_0_black] transition-all hover:shadow-[0px_0px_0_0_black] md:px-6 md:py-4 md:text-lg"
               >
                 Get Started
               </Link>
               <Link
                 href="/main-feed"
-                className="border-b-2 border-b-black px-6 py-4 text-lg font-semibold"
+                className="border-b-2 border-b-black px-4 py-2 font-semibold md:px-6 md:py-4 md:text-lg"
               >
                 View Articles
               </Link>

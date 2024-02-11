@@ -11,7 +11,7 @@ type Props<T> = {
   footer: T;
   more_articles: T;
   featured: T;
-  menu: T;
+  community: T;
 };
 
 const layout = ({
@@ -25,13 +25,11 @@ const layout = ({
   footer,
   more_articles,
   featured,
-  menu,
+  community,
 }: Props<ReactNode>) => {
   return (
     <main className="container flex max-w-[1600px] flex-wrap">
       {nav}
-      {menu}
-      <div id="menu-root" />
       {hero}
       {categories}
       <div className="flex w-full flex-col items-center">
@@ -45,6 +43,7 @@ const layout = ({
           {authors}
         </div>
       </div>
+      {community}
       {footer}
       {children}
     </main>

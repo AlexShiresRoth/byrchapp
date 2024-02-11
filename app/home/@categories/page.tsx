@@ -27,7 +27,7 @@ const Categories = () => {
         <div className="bg-black p-2 md:p-4">
           <p className="font-semibold text-white">Categories</p>
         </div>
-        <div className="flex min-w-full items-center gap-2">
+        <div className="flex w-full items-center justify-between gap-2 px-4">
           {FakeCategories.map((category, index) => {
             return (
               <>
