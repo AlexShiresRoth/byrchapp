@@ -3,25 +3,39 @@
 import prisma from "@/lib/prisma";
 import { revalidateTag } from "next/cache";
 
-/**
- *
- * @todo need to check if category already exists in db
- * @todo need to figure out a way to rank categories or just random?
- * @todo need to finish this function
- */
-export async function createCategory(name: string, postId: string) {
-  const res = await prisma.category.create({
-    data: {
-      name,
-      posts: {
-        connect: {
-          id: postId,
+export async function createCategory(name: string | null, postId: string) {
+  try {
+    if (!name) return console.error("[CATEGORY]: No category name provided.");
+
+    // find the category
+    const category = await prisma.category.findFirst({
+      where: {
+        name,
+      },
+    });
+
+    if (category) {
+      console.log(
+        "[CATEGORY]: Did not create new category, category already exists in db.",
+      );
+      return;
+    }
+
+    const res = await prisma.category.create({
+      data: {
+        name,
+        posts: {
+          connect: {
+            id: postId,
+          },
         },
       },
-    },
-  });
+    });
 
-  revalidateTag("category");
+    revalidateTag("category");
 
-  return res;
+    return res;
+  } catch (error) {
+    console.error("[CATEGORY]: Error creating category", error);
+  }
 }
