@@ -1,7 +1,8 @@
 import prisma from "@/lib/prisma";
+import { Category } from "@prisma/client";
 import Link from "next/link";
 
-async function getCategories() {
+async function getCategories(): Promise<Category[]> {
   const res = await prisma.category.findMany();
 
   return res.slice(0, 6);
