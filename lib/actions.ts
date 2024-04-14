@@ -281,6 +281,17 @@ export const updatePost = async (data: Post) => {
     };
   }
   try {
+    // const categoryRef = await prisma.category.create({
+    //   data: {
+    //     name: data.category as string,
+    //     posts: {
+    //       connect: {
+    //         id: data.id,
+    //       },
+    //     },
+    //   },
+    // });
+
     const response = await prisma.post.update({
       where: {
         id: data.id,
@@ -291,6 +302,7 @@ export const updatePost = async (data: Post) => {
         summary: data.summary,
         content: data.content,
         category: data.category,
+        // categoryId: categoryRef.id,
       },
     });
 

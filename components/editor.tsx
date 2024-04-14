@@ -1,11 +1,12 @@
 "use client";
 
 import { updatePost, updatePostMetadata } from "@/lib/actions";
+import { createCategory } from "@/lib/category-actions";
 import { cn } from "@/lib/utils";
 import { Post } from "@prisma/client";
 import { ExternalLink, InfoIcon } from "lucide-react";
 import { Editor as NovelEditor } from "novel";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { toast } from "sonner";
 import LoadingDots from "./icons/loading-dots";
@@ -17,20 +18,24 @@ export default function Editor({ post }: { post: PostWithSite }) {
   // this is a backup option incase autosave fails or title and desc are changed
   const [isChanged, setIsChanged] = useState(false);
   const [data, setData] = useState<PostWithSite>(post);
+  const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    if (data) {
-      // this is only necessary because title and description are not updated in the editor
-      if (
-        data.title !== post.title ||
-        data.description !== post.description ||
-        data.summary !== post.summary ||
-        data.category !== post.category
-      ) {
-        setIsChanged(true);
-      }
+  const handleDebounceChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    field: string,
+  ) => {
+    setIsChanged(true);
+    setData({ ...data, [field]: e.target.value });
+
+    if (timeoutIdRef.current) {
+      clearTimeout(timeoutIdRef.current);
     }
-  }, [data, post]);
+
+    timeoutIdRef.current = setTimeout(async () => {
+      await updatePost({ ...data, [field]: e.target.value });
+      setIsChanged(false);
+    }, 300);
+  };
 
   // listen to CMD + S and override the default behavior
   useEffect(() => {
@@ -49,7 +54,7 @@ export default function Editor({ post }: { post: PostWithSite }) {
   }, [data, startTransitionSaving]);
 
   return (
-    <div className="relative min-h-[500px] w-full max-w-screen-lg border-amber-100 p-12 px-8 dark:border-stone-700 sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:px-12 sm:shadow-lg">
+    <div className="relative min-h-[500px] w-full max-w-screen-lg border-amber-100 p-12 px-8 sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:px-12 sm:shadow-lg dark:border-stone-700">
       <PostButtons
         data={data}
         setData={setData}
@@ -66,7 +71,7 @@ export default function Editor({ post }: { post: PostWithSite }) {
           name="title"
           defaultValue={post?.title || ""}
           autoFocus
-          onChange={(e) => setData({ ...data, title: e.target.value })}
+          onChange={(e) => handleDebounceChange(e, "title")}
           className="dark:placeholder-text-600 border-none px-0 font-cal text-3xl placeholder:text-stone-400 focus:outline-none focus:ring-0 dark:bg-black dark:text-white"
         />
 
@@ -74,7 +79,7 @@ export default function Editor({ post }: { post: PostWithSite }) {
           name="description"
           placeholder="Description"
           defaultValue={post?.description || ""}
-          onChange={(e) => setData({ ...data, description: e.target.value })}
+          onChange={(e) => handleDebounceChange(e, "description")}
           className="dark:placeholder-text-600 w-full resize-none border-none px-0 placeholder:text-stone-400 focus:outline-none focus:ring-0 dark:bg-black dark:text-white"
         />
 
@@ -84,7 +89,7 @@ export default function Editor({ post }: { post: PostWithSite }) {
           name="category"
           defaultValue={post?.category || ""}
           autoFocus
-          onChange={(e) => setData({ ...data, category: e.target.value })}
+          onChange={(e) => handleDebounceChange(e, "category")}
           className="w-fit rounded border-0 bg-amber-50 p-2 font-cal text-sm text-amber-500 placeholder-amber-400 outline-none focus:ring-0"
         />
       </div>
@@ -113,7 +118,9 @@ export default function Editor({ post }: { post: PostWithSite }) {
           if (
             data.title === post.title &&
             data.description === post.description &&
-            data.content === post.content
+            data.content === post.content &&
+            data.summary === post.summary &&
+            data.category === post.category
           ) {
             return;
           }
@@ -142,9 +149,7 @@ const PostButtons = ({
   setData,
   isChanged,
   isPendingSaving,
-  startTransitionSaving,
   post,
-  setIsChanged,
 }: PostButtonsProps) => {
   let [isPendingPublishing, startTransitionPublishing] = useTransition();
   const [showImageInfo, setShowImageInfo] = useState(false);
@@ -175,25 +180,11 @@ const PostButtons = ({
           : "Saved"}
       </div>
 
-      {isChanged && (
-        <button
-          // type="button"
-          className="rounded-lg bg-emerald-400 px-2 py-1 text-sm text-white hover:bg-emerald-500 focus:outline-none"
-          onClick={() => {
-            startTransitionSaving(async () => {
-              await updatePost(data);
-              setIsChanged(false);
-            });
-          }}
-        >
-          Save Changes
-        </button>
-      )}
       <button
         onClick={() => {
           const formData = new FormData();
-          console.log(data.published, typeof data.published);
           formData.append("published", String(!data.published));
+          createCategory(data.category, post.id);
           startTransitionPublishing(async () => {
             await updatePostMetadata(formData, post.id, "published").then(
               () => {
