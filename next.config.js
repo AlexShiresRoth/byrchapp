@@ -2,17 +2,13 @@
  * @type {import('next').NextConfig}
  */
 module.exports = {
-  logging: {
-    level: "info",
-    fetches: true,
-  },
   images: {
     remotePatterns: [
       {
         hostname: "images.unsplash.com",
         protocol: "https",
       },
-      { 
+      {
         hostname: "wdl83yzlweuyqze5.public.blob.vercel-storage.com",
         protocol: "https",
       },
@@ -53,7 +49,6 @@ module.exports = {
         protocol: "https",
       },
     ],
-  
   },
   reactStrictMode: false,
 };

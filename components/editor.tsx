@@ -1,9 +1,7 @@
 "use client";
-
 import { updatePost, updatePostMetadata } from "@/lib/actions";
-import { createCategory } from "@/lib/category-actions";
 import { cn } from "@/lib/utils";
-import { Post } from "@prisma/client";
+import { Category, Post } from "@prisma/client";
 import { ExternalLink, InfoIcon } from "lucide-react";
 import { Editor as NovelEditor } from "novel";
 import { useEffect, useRef, useState, useTransition } from "react";
@@ -13,26 +11,28 @@ import LoadingDots from "./icons/loading-dots";
 
 type PostWithSite = Post & { site: { subdomain: string | null } | null };
 
-export default function Editor({ post }: { post: PostWithSite }) {
-  let [isPendingSaving, startTransitionSaving] = useTransition();
-  // this is a backup option incase autosave fails or title and desc are changed
+export default function Editor({
+  post,
+  categories,
+}: {
+  post: PostWithSite;
+  categories: Category[];
+}) {
+  const [isPendingSaving, startTransitionSaving] = useTransition();
   const [isChanged, setIsChanged] = useState(false);
   const [data, setData] = useState<PostWithSite>(post);
   const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
 
-  const handleDebounceChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    field: string,
-  ) => {
+  const handleDebounceChange = (e: string, field: string) => {
     setIsChanged(true);
-    setData({ ...data, [field]: e.target.value });
+    setData({ ...data, [field]: e });
 
     if (timeoutIdRef.current) {
       clearTimeout(timeoutIdRef.current);
     }
 
     timeoutIdRef.current = setTimeout(async () => {
-      await updatePost({ ...data, [field]: e.target.value });
+      await updatePost({ ...data, [field]: e });
       setIsChanged(false);
     }, 300);
   };
@@ -71,27 +71,35 @@ export default function Editor({ post }: { post: PostWithSite }) {
           name="title"
           defaultValue={post?.title || ""}
           autoFocus
-          onChange={(e) => handleDebounceChange(e, "title")}
-          className="dark:placeholder-text-600 border-none px-0 font-cal text-3xl placeholder:text-stone-400 focus:outline-none focus:ring-0 dark:bg-black dark:text-white"
+          onChange={(e) => handleDebounceChange(e.currentTarget.value, "title")}
+          className="dark:placeholder-text-600 border-none bg-transparent px-0 font-cal text-3xl placeholder:text-stone-400 focus:outline-none focus:ring-0 dark:text-white"
         />
 
         <TextareaAutosize
           name="description"
           placeholder="Description"
           defaultValue={post?.description || ""}
-          onChange={(e) => handleDebounceChange(e, "description")}
-          className="dark:placeholder-text-600 w-full resize-none border-none px-0 placeholder:text-stone-400 focus:outline-none focus:ring-0 dark:bg-black dark:text-white"
+          onChange={(e) =>
+            handleDebounceChange(e.currentTarget.value, "description")
+          }
+          className="dark:placeholder-text-600 w-full resize-none border-none bg-transparent px-0 placeholder:text-stone-400 focus:outline-none focus:ring-0 dark:text-white"
         />
 
-        <input
-          type="text"
-          placeholder="Category (optional)"
-          name="category"
+        <select
+          title="post category"
           defaultValue={post?.category || ""}
-          autoFocus
-          onChange={(e) => handleDebounceChange(e, "category")}
-          className="w-fit rounded border-0 bg-amber-50 p-2 font-cal text-sm text-amber-500 placeholder-amber-400 outline-none focus:ring-0"
-        />
+          onChange={(e) =>
+            handleDebounceChange(e.currentTarget.value, "category")
+          }
+          className="dark:placeholder-text-600 w-fit rounded border border-stone-200 bg-transparent px-4 py-2 placeholder:text-stone-400 hover:cursor-pointer focus:outline-none focus:ring-0 dark:text-white"
+        >
+          <option>Choose Category</option>
+          {categories.map((c) => (
+            <option key={c.id} value={c.name} className="px-2">
+              {c.name}
+            </option>
+          ))}
+        </select>
       </div>
       <div className="flex flex-col gap-1">
         <label htmlFor="tldr" className="text-sm font-semibold text-stone-400">
@@ -184,7 +192,6 @@ const PostButtons = ({
         onClick={() => {
           const formData = new FormData();
           formData.append("published", String(!data.published));
-          createCategory(data.category, post.id);
           startTransitionPublishing(async () => {
             await updatePostMetadata(formData, post.id, "published").then(
               () => {
