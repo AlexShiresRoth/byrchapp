@@ -8,6 +8,9 @@ export default async function PostPage({ params }: { params: { id: string } }) {
   if (!session) {
     redirect("/login");
   }
+
+  const categories = await prisma.category.findMany();
+
   const data = await prisma.post.findUnique({
     where: {
       id: decodeURIComponent(params.id),
@@ -25,5 +28,5 @@ export default async function PostPage({ params }: { params: { id: string } }) {
     notFound();
   }
 
-  return <Editor post={data} />;
+  return <Editor post={data} categories={categories} />;
 }
