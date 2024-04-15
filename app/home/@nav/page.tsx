@@ -1,5 +1,6 @@
 import Link from "next/link";
 import MobileMenu from "./mobile-menu";
+import { headers } from "next/headers";
 
 const Nav = () => {
   return (
@@ -15,6 +16,12 @@ const Nav = () => {
 };
 
 const Menu = () => {
+  const headersList = headers();
+  const domain = headersList.get("host");
+  const prefixedDomain = `${
+    process.env.DEV_MODE === "yes" ? "http://" : "https://"
+  }app.${domain}`;
+
   return (
     <>
       <div className="hidden items-center gap-14 font-semibold md:flex">
@@ -22,7 +29,7 @@ const Menu = () => {
           Home
         </Link>
         <Link href="/about">About</Link>
-        <Link href={"/login"}>Login</Link>
+        <a href={prefixedDomain}>Login</a>
         <Link href={"/signup"}>Signup</Link>
       </div>
       <MobileMenu />

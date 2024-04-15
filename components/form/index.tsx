@@ -76,6 +76,7 @@ export default function Form({
         ) : inputAttrs.name === "font" ? (
           <div className="flex max-w-sm items-center overflow-hidden rounded-lg border border-stone-600">
             <select
+              title="category"
               name="font"
               defaultValue={inputAttrs.defaultValue}
               className="w-full rounded-none border-none bg-white px-4 py-2 text-sm font-medium text-stone-700 focus:outline-none focus:ring-black dark:bg-black dark:text-stone-200 dark:focus:ring-white"
@@ -126,7 +127,7 @@ export default function Form({
       {inputAttrs.name === "customDomain" && inputAttrs.defaultValue && (
         <DomainConfiguration domain={inputAttrs.defaultValue} />
       )}
-      <div className="flex flex-col items-center justify-center space-y-2 rounded-b-lg border-t border-stone-200 bg-stone-50 p-3 dark:border-stone-700 dark:bg-stone-800 sm:flex-row sm:justify-between sm:space-y-0 sm:px-10">
+      <div className="flex flex-col items-center justify-center space-y-2 rounded-b-lg border-t border-stone-200 bg-stone-50 p-3 sm:flex-row sm:justify-between sm:space-y-0 sm:px-10 dark:border-stone-700 dark:bg-stone-800">
         <p className="text-sm text-stone-500 dark:text-stone-400">{helpText}</p>
         <FormButton />
       </div>
