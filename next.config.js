@@ -48,6 +48,10 @@ module.exports = {
         hostname: "illustrations.popsy.co",
         protocol: "https",
       },
+      {
+        hostname: "lh3.googleusercontent.com",
+        protocol: "https",
+      },
     ],
   },
   reactStrictMode: false,

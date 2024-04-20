@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import LoginButton from "./login-button";
 
-export default function LoginPage() {
+export default async function LoginPage() {
   return (
-    <div className="mx-5 border border-stone-200 py-10 sm:mx-auto sm:w-full sm:max-w-md sm:rounded-lg sm:shadow-md dark:border-stone-700">
-      <h1 className="mt-6 text-center font-cal text-3xl dark:text-white">
+    <div className="relative mx-5 bg-amber-400 py-10 sm:mx-auto  sm:w-full sm:max-w-md md:border-2 md:border-black md:shadow-[10px_10px_0_0_black]">
+      <h1 className="mt-6 text-center font-cal text-3xl font-bold dark:text-white">
         Byrch.app
       </h1>
       <p className="mt-2 text-center text-sm text-stone-600 dark:text-stone-400">

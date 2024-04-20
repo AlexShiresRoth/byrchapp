@@ -11,6 +11,15 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+
+      profile(profile) {
+        return {
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture,
+        };
+      },
     }),
     GitHubProvider({
       clientId: process.env.AUTH_GITHUB_ID as string,
@@ -29,8 +38,9 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: `/login`,
     verifyRequest: `/login`,
-    error: "/login", // Error code passed in query string as ?error=
+    error: "/error", // Error code passed in query string as ?error=
   },
+
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   cookies: {
@@ -55,6 +65,13 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
+
+    // signIn: async ({ user, email }) => {
+    //   console.log("user?", user);
+    //   console.log("email", email);
+    //   return false;
+    // },
+
     session: async ({ session, token }) => {
       session.user = {
         ...session.user,
