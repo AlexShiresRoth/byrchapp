@@ -3,6 +3,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { getServerSession, type NextAuthOptions } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
+import FacebookProvider from "next-auth/providers/facebook";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
 
@@ -11,13 +12,24 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-
       profile(profile) {
         return {
           id: profile.sub,
           name: profile.name,
           email: profile.email,
           image: profile.picture,
+        };
+      },
+    }),
+    FacebookProvider({
+      clientId: process.env.FB_CLIENT_ID as string,
+      clientSecret: process.env.FB_CLIENT_SECRET as string,
+      profile(profile) {
+        return {
+          id: profile.id,
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture.data.url,
         };
       },
     }),
@@ -38,7 +50,7 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: `/login`,
     verifyRequest: `/login`,
-    error: "/error", // Error code passed in query string as ?error=
+    error: "/login", // Error code passed in query string as ?error=
   },
 
   adapter: PrismaAdapter(prisma),
@@ -65,12 +77,6 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
-
-    // signIn: async ({ user, email }) => {
-    //   console.log("user?", user);
-    //   console.log("email", email);
-    //   return false;
-    // },
 
     session: async ({ session, token }) => {
       session.user = {

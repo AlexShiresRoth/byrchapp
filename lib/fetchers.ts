@@ -63,10 +63,6 @@ export async function getPostData(domain: string, slug: string) {
     ? domain.replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
     : null;
 
-  console.log(
-    "full domain",
-    subdomain ? { subdomain } : { customDomain: domain },
-  );
   return await unstable_cache(
     async () => {
       const data = await prisma.post.findFirst({
